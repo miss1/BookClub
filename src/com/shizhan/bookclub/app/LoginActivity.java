@@ -1,5 +1,7 @@
 package com.shizhan.bookclub.app;
 
+import com.shizhan.bookclub.app.model.MyUsers;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.SaveListener;
 
 public class LoginActivity extends Activity implements OnClickListener{
@@ -39,7 +40,7 @@ public class LoginActivity extends Activity implements OnClickListener{
 		case R.id.login:
 			String lusername = username.getText().toString();
 			String lpassword = password.getText().toString();
-			BmobUser use = new BmobUser();
+			MyUsers use = new MyUsers();
 			use.setUsername(lusername);
 			use.setPassword(lpassword);
 			use.login(LoginActivity.this, new SaveListener() {
@@ -47,6 +48,8 @@ public class LoginActivity extends Activity implements OnClickListener{
 				@Override
 				public void onSuccess() {
 					Toast.makeText(LoginActivity.this, "µÇÂ½³É¹¦", Toast.LENGTH_SHORT).show();
+					Intent intentl = new Intent(LoginActivity.this, MainActivity.class);
+					startActivity(intentl);
 					finish();
 				}
 				

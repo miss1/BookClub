@@ -32,6 +32,9 @@
         <activity android:name="com.shizhan.bookclub.app.LoginActivity"/>
         <activity android:name="com.shizhan.bookclub.app.MainActivity"/>
         <activity android:name="com.shizhan.bookclub.app.RegistActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.InfoEditeActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name="com.shizhan.bookclub.app.InfoTalkActivity"/>
     </application>
 
 </manifest>

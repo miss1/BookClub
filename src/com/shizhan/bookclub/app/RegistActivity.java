@@ -1,5 +1,8 @@
 package com.shizhan.bookclub.app;
 
+import com.shizhan.bookclub.app.model.Information;
+import com.shizhan.bookclub.app.model.MyUsers;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +18,15 @@ import cn.bmob.v3.listener.SaveListener;
 public class RegistActivity extends Activity implements OnClickListener{
 	
 	private EditText rgnicheng;
+	private EditText rgzhanghao;
 	private EditText rgmima;
 	private EditText rgmimas;
 	
 	private Button rgok;
 	private Button rgback;
+	
+	private String zhanghao;
+	private String nicheng;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,7 @@ public class RegistActivity extends Activity implements OnClickListener{
 
 	//获取各控件的实例对象及设置事件监听
 	private void inits() {
+		rgzhanghao = (EditText) findViewById(R.id.rg_zhanghao);
 		rgnicheng = (EditText) findViewById(R.id.rg_nicheng);
 		rgmima = (EditText) findViewById(R.id.rg_mima);
 		rgmimas = (EditText) findViewById(R.id.rg_mimas);
@@ -44,18 +52,20 @@ public class RegistActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.rg_ok:
-			String nicheng = rgnicheng.getText().toString();
+			zhanghao = rgzhanghao.getText().toString();
+			nicheng = rgnicheng.getText().toString();
 			String mima = rgmima.getText().toString();
 			String mimas = rgmimas.getText().toString();
-			BmobUser user = new BmobUser();
+			MyUsers user = new MyUsers();
             if(!(mima.equals(mimas))){
 				Toast.makeText(RegistActivity.this, "两次输入的密码不相同", Toast.LENGTH_SHORT).show();
 				rgmima.setText("");
 				rgmimas.setText("");
 				return;
 			}else{
-				user.setUsername(nicheng);
+				user.setUsername(zhanghao);
 				user.setPassword(mima);
+				user.setUserId(nicheng);
 				user.signUp(RegistActivity.this, new SaveListener() {
 					
 					@Override
@@ -63,6 +73,7 @@ public class RegistActivity extends Activity implements OnClickListener{
 						Toast.makeText(RegistActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
 						Intent intent = new Intent(RegistActivity.this, MainActivity.class);
 						startActivity(intent);
+						createInfotable();
 						finish();
 					}
 					
@@ -80,6 +91,34 @@ public class RegistActivity extends Activity implements OnClickListener{
 			break;
 		}
 		
+	}
+
+	//创建个人信息表
+	private void createInfotable() {
+		MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
+		Information infomation = new Information();
+		infomation.setUser(user);
+		infomation.setZhanghao(zhanghao);
+		infomation.setNicheng(nicheng);
+		infomation.setSex("");
+		infomation.setAge("");
+		infomation.setCity("");
+		infomation.setGeqian("");
+		infomation.setLovebook("");
+		infomation.setLoveauthor("");
+		infomation.setBookstyle("");
+		infomation.save(this, new SaveListener() {
+			
+			@Override
+			public void onSuccess() {
+				Toast.makeText(RegistActivity.this, "信息更新成功", Toast.LENGTH_SHORT).show();				
+			}
+			
+			@Override
+			public void onFailure(int arg0, String arg1) {
+				Toast.makeText(RegistActivity.this, "信息更新失败", Toast.LENGTH_SHORT).show();			
+			}
+		});
 	}
 
 }
