@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,13 +35,15 @@ import com.shizhan.bookclub.app.adapter.InfoShowAdapter;
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.InformationShow;
 import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.mylistview.ReFlashListView;
+import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
 
-public class MeFragment extends Fragment implements OnClickListener{
+public class MeFragment extends Fragment implements OnClickListener,IReflashListener{
 	
 	private ImageView personEdite;
 	private TextView personTalk;
 	private TextView personName;
-	private ListView listInformation;
+	private ReFlashListView listInformation;      //自定义的下拉刷新ListView
 	private ListView meEditeList;
 	
 	private InfoShowAdapter adapter;
@@ -72,7 +75,8 @@ public class MeFragment extends Fragment implements OnClickListener{
 		personEdite = (ImageView) meLayout.findViewById(R.id.person_edite);
 		personTalk = (TextView) meLayout.findViewById(R.id.person_talk);
 		personName = (TextView) meLayout.findViewById(R.id.person_name);
-		listInformation = (ListView) meLayout.findViewById(R.id.list_information);
+		listInformation = (ReFlashListView) meLayout.findViewById(R.id.list_information);
+		listInformation.setInterface(this);
 		personEdite.setOnClickListener(this);
 		personTalk.setOnClickListener(this);
 		return meLayout;
@@ -130,6 +134,22 @@ public class MeFragment extends Fragment implements OnClickListener{
 		default:
 			break;
 		}
+		
+	}
+	
+	/*下拉刷新*/
+	@Override
+	public void onReflash() {
+		Handler handle = new Handler();
+		handle.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				infolist.clear();
+				initInfo();
+				listInformation.reflashComplete();
+			}
+		}, 2000);
 		
 	}
 

@@ -65,12 +65,12 @@
                 android:textSize="20sp" />
         </RelativeLayout>
 
-        <ListView
+        <com.shizhan.bookclub.app.mylistview.ReFlashListView
             android:id="@+id/list_information"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp" >
-        </ListView>
+            android:layout_marginTop="5dp" />
+        
     </LinearLayout>
 
 </LinearLayout>
