@@ -1,6 +1,7 @@
 package com.shizhan.bookclub.app.fragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
@@ -46,9 +48,16 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	private ReFlashListView listInformation;      //自定义的下拉刷新ListView
 	private ListView meEditeList;
 	
-	private InfoShowAdapter adapter;
+	/*网络连接上时ListView加载的适配器及内容*/
+	private InfoShowAdapter adapter;                    
 	private List<InformationShow> infolist = new ArrayList<InformationShow>();
 	
+	/*网络没有连接上时ListView加载的适配器及内容*/
+	private SimpleAdapter adapterd;
+	private List<HashMap<String, Object>> disconectList = new ArrayList<HashMap<String,Object>>();
+	private HashMap<String, Object> map = new HashMap<String, Object>();
+	
+	/*下拉选择框*/
 	private PopupWindow popupWindow;
 	private LayoutInflater layoutInflater;
 	private View view;
@@ -114,8 +123,13 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			
 			@Override
 			public void onError(int arg0, String arg1) {
-				Toast.makeText(getActivity(), "更新失败", Toast.LENGTH_SHORT).show();
-				
+				disconectList.clear();
+				map.put("image", R.drawable.minion);
+				map.put("text", "啊哦。没有网喽。。。");
+				disconectList.add(map);
+				adapterd = new SimpleAdapter(getActivity(), disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
+				listInformation.setAdapter(adapterd);
+				Toast.makeText(getActivity(), arg1, Toast.LENGTH_LONG).show();
 			}
 		});
 		
@@ -178,11 +192,13 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 				case 0:                     //跳转到编辑资料页面
 					Intent intent = new Intent(getActivity(), InfoEditeActivity.class);
 					startActivity(intent);
+					popupWindow.dismiss();
 					break;
 				case 1:                     //退出当前账号,跳转到登陆界面
 					BmobUser.logOut(getActivity());
 					Intent intentl = new Intent(getActivity(), LoginActivity.class);
 					startActivity(intentl);
+					popupWindow.dismiss();
 					getActivity().finish();
 					break;
 				default:

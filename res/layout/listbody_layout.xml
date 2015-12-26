@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+        
+        <ImageView
+            android:id="@+id/im1" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/minion"
+            android:layout_centerVertical="true"/>
+        
+        <TextView
+            android:id="@+id/tx1" 
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:text="啊哦。没有网了。。"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_toRightOf="@id/im1"
+            android:layout_marginLeft="10dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

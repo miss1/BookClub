@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +31,14 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 	
 	private ListView infoEditeList;
 	
+	/*网络连接上时ListView加载的适配器及内容*/
 	private InfoEditeAdapterr adapter;
 	private List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(); 
+	
+	/*网络没有连接上时ListView加载的适配器及内容*/
+	private SimpleAdapter adapterd;
+	private List<HashMap<String, Object>> disconectList = new ArrayList<HashMap<String,Object>>();
+	private HashMap<String, Object> map = new HashMap<String, Object>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -150,8 +157,13 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 			
 			@Override
 			public void onError(int arg0, String arg1) {
-				Toast.makeText(InfoEditeActivity.this, "查找失败", Toast.LENGTH_SHORT).show();
-				
+				disconectList.clear();
+				map.put("image", R.drawable.minion);
+				map.put("text", "啊哦。没有网喽。。。");
+				disconectList.add(map);
+				adapterd = new SimpleAdapter(InfoEditeActivity.this, disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
+				infoEditeList.setAdapter(adapterd);
+				Toast.makeText(InfoEditeActivity.this, arg1, Toast.LENGTH_LONG).show();
 			}
 		});
 			
