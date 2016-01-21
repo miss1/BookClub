@@ -1,7 +1,6 @@
 package com.shizhan.bookclub.app.fragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
@@ -53,11 +51,6 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	private InfoShowAdapter adapter;                    
 	private List<InformationShow> infolist = new ArrayList<InformationShow>();
 	
-	/*网络没有连接上时ListView加载的适配器及内容*/
-	private SimpleAdapter adapterd;
-	private List<HashMap<String, Object>> disconectList = new ArrayList<HashMap<String,Object>>();
-	private HashMap<String, Object> map = new HashMap<String, Object>();
-	
 	/*下拉选择框*/
 	private PopupWindow popupWindow;
 	private LayoutInflater layoutInflater;
@@ -69,7 +62,6 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		initInfo();          //初始化个人信息
 		grouplist = new ArrayList<String>();
 		grouplist.add("编辑资料");
 		grouplist.add("退       出");
@@ -86,6 +78,11 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		personTalk = (TextView) meLayout.findViewById(R.id.person_talk);
 		personName = (TextView) meLayout.findViewById(R.id.person_name);
 		listInformation = (ReFlashListView) meLayout.findViewById(R.id.list_information);
+		
+		adapter = new InfoShowAdapter(getActivity(), infolist);
+		listInformation.setAdapter(adapter);
+		initInfo();
+		
 		listInformation.setInterface(this);
 		personEdite.setOnClickListener(this);
 		personTalk.setOnClickListener(this);
@@ -101,6 +98,7 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			
 			@Override
 			public void onSuccess(List<Information> arg0) {
+				infolist.clear();
 				InformationShow zhanghao = new InformationShow("账        号：", arg0.get(0).getZhanghao());
 				infolist.add(zhanghao);
 				InformationShow nicheng = new InformationShow("性        别：", arg0.get(0).getSex());
@@ -118,18 +116,11 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 				InformationShow bookstyle = new InformationShow("看书类型：", arg0.get(0).getBookstyle());
 				infolist.add(bookstyle);
 				personName.setText(arg0.get(0).getNicheng());
-				adapter = new InfoShowAdapter(getActivity(), R.layout.me_layout_item, infolist);
-				listInformation.setAdapter(adapter);
+				adapter.notifyDataSetChanged();  //数据改变，动态更新列表
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
-				disconectList.clear();
-				map.put("image", R.drawable.minion);
-				map.put("text", "啊哦。没有网喽。。。");
-				disconectList.add(map);
-				adapterd = new SimpleAdapter(getActivity(), disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
-				listInformation.setAdapter(adapterd);
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_LONG).show();
 			}
 		});
@@ -160,12 +151,11 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			
 			@Override
 			public void run() {
-				infolist.clear();
+				
 				initInfo();
 				listInformation.reflashComplete();
 			}
 		}, 2000);
-		
 	}
 
 	//显示PopupWindow

@@ -52,10 +52,15 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 		newsFind = (ImageView) newsLayout.findViewById(R.id.news_find);
 		newsEdit = (ImageView) newsLayout.findViewById(R.id.news_edit);
 		newsListview = (ReFlashListView) newsLayout.findViewById(R.id.news_listview);
+		
+		adapter = new NewsListAdapter(getActivity(), listp);
+		newsListview.setAdapter(adapter);
+		initInfo();
+		
 		newsListview.setInterface(this);
 		newsFind.setOnClickListener(this);
 		newsEdit.setOnClickListener(this);
-		initInfo();
+		
 		return newsLayout;
 	}
 
@@ -67,22 +72,22 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 			
 			@Override
 			public void onSuccess(List<Post> arg0) {
+				listp.clear();
 				for(Post post : arg0){
 					listp.add(0,post);
 				}
-				adapter = new NewsListAdapter(getActivity(), R.layout.news_layout_item, listp);
-				newsListview.setAdapter(adapter);
+				adapter.notifyDataSetChanged();         //数据改变，动态更新列表
 				listItemClick();                                  //Item点击事件
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
-				disconectList.clear();
+				/*disconectList.clear();
 				map.put("image", R.drawable.minion);
 				map.put("text", "啊哦。没有网喽。。。");
 				disconectList.add(map);
 				adapterd = new SimpleAdapter(getActivity(), disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
-				newsListview.setAdapter(adapterd);
+				newsListview.setAdapter(adapterd);*/
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -127,7 +132,6 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 			
 			@Override
 			public void run() {
-				listp.clear();
 				initInfo();
 				newsListview.reflashComplete();
 			}
