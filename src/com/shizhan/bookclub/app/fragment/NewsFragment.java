@@ -1,20 +1,7 @@
 package com.shizhan.bookclub.app.fragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
-
-import com.shizhan.bookclub.app.FindallActivity;
-import com.shizhan.bookclub.app.NewsCommentActivity;
-import com.shizhan.bookclub.app.R;
-import com.shizhan.bookclub.app.WritefeelingActivity;
-import com.shizhan.bookclub.app.adapter.NewsListAdapter;
-import com.shizhan.bookclub.app.model.Post;
-import com.shizhan.bookclub.app.mylistview.ReFlashListView;
-import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -27,8 +14,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
+
+import com.shizhan.bookclub.app.FindallActivity;
+import com.shizhan.bookclub.app.NewsCommentActivity;
+import com.shizhan.bookclub.app.R;
+import com.shizhan.bookclub.app.WritefeelingActivity;
+import com.shizhan.bookclub.app.adapter.NewsListAdapter;
+import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.mylistview.ReFlashListView;
+import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
 
 public class NewsFragment extends Fragment implements OnClickListener,IReflashListener{
 	
@@ -39,11 +36,6 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 	/*网络连接上时ListView加载的适配器及内容*/
 	private NewsListAdapter adapter;
 	private List<Post> listp = new ArrayList<Post>();
-	
-	/*网络没有连接上时ListView加载的适配器及内容*/
-	private SimpleAdapter adapterd;
-	private List<HashMap<String, Object>> disconectList = new ArrayList<HashMap<String,Object>>();
-	private HashMap<String, Object> map = new HashMap<String, Object>();
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,12 +74,6 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 			
 			@Override
 			public void onError(int arg0, String arg1) {
-				/*disconectList.clear();
-				map.put("image", R.drawable.minion);
-				map.put("text", "啊哦。没有网喽。。。");
-				disconectList.add(map);
-				adapterd = new SimpleAdapter(getActivity(), disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
-				newsListview.setAdapter(adapterd);*/
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
 			}
 		});
