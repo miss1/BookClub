@@ -35,6 +35,9 @@
         <activity android:name="com.shizhan.bookclub.app.InfoEditeActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.shizhan.bookclub.app.InfoTalkActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.FindallActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.WritefeelingActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.NewsCommentActivity"/>
     </application>
 
 </manifest>

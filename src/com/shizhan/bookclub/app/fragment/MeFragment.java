@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.PopupWindow.OnDismissListener;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -181,6 +182,23 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		int xPos = windowManager.getDefaultDisplay().getWidth()/2-popupWindow.getWidth()/2;
 		popupWindow.showAsDropDown(v, xPos, 0);
+		
+		//popupWindow出现时其他地方变暗
+		WindowManager.LayoutParams param = getActivity().getWindow().getAttributes();
+		param.alpha=0.7f;
+		getActivity().getWindow().setAttributes(param);
+		
+		//当popupWindow消失时，将变暗的地方变回正常的样子
+		popupWindow.setOnDismissListener(new OnDismissListener() {
+			
+			@Override
+			public void onDismiss() {
+				WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
+				params.alpha=1f;
+				getActivity().getWindow().setAttributes(params);
+				
+			}
+		});
 		
 		//点击事件
 		meEditeList.setOnItemClickListener(new OnItemClickListener() {

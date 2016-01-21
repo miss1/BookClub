@@ -70,7 +70,7 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 
 	//更新信息
 	private void updateInfo() {
-		MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
+		final MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
 		BmobQuery<Information> query = new BmobQuery<Information>();
 		query.addWhereEqualTo("user", user);
 		query.findObjects(InfoEditeActivity.this, new FindListener<Information>() {
@@ -100,7 +100,8 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 						}
 					});
 				}
-				
+				user.setUserId(list.get(0).get("contents").toString());
+				user.update(InfoEditeActivity.this);
 			}
 			
 			@Override

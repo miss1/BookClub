@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <ImageView 
+        android:id="@+id/comments_itemImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/head"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"/>
+    
+    <TextView 
+        android:id="@+id/comments_itemAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="沫世锦年"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/comments_itemImage"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"/>
+    
+    <TextView 
+        android:id="@+id/comments_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="第2楼"
+        android:textSize="13sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/comments_itemImage"
+        android:layout_below="@id/comments_itemAuthor"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"/>
+    
+    <TextView 
+        android:id="@+id/comments_itemTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2016-01-03 17:19"
+        android:textSize="13sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/comments_count"
+        android:layout_below="@id/comments_itemAuthor"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"/>
+    
+    <TextView 
+        android:id="@+id/comments_itemContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="啦啦啦，我是内容"
+        android:textSize="18sp"
+        android:layout_below="@id/comments_itemTime"
+        android:layout_toRightOf="@id/comments_itemImage"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="7dp"/>
+
+</RelativeLayout>
