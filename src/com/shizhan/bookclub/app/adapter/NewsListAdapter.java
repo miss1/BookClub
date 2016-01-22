@@ -18,8 +18,8 @@ public class NewsListAdapter extends BaseAdapter {
 	private Context ncontext;
 	private List<Post> nposts;
 	private LayoutInflater inflater;
-	private final int TYPE_1 = 0;
-	private final int TYPE_2 = 1;
+	private final int TYPE_1 = 0;      //正常加载帖子时的样式
+	private final int TYPE_2 = 1;      //没网络时view的样式
 
 	public NewsListAdapter(Context context, List<Post> posts){
 		ncontext = context;

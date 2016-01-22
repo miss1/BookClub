@@ -21,9 +21,9 @@ public class CommentsListAdapter extends BaseAdapter {
 	private Post mpost;
 	private Context mcontext;
 	private LayoutInflater inflater;
-	private final int TYPE_1 = 0;
-	private final int TYPE_2 = 1;
-	private final int TYPE_3 = 2;
+	private final int TYPE_1 = 0;         //帖子主题样式
+	private final int TYPE_2 = 1;         //帖子评论样式
+	private final int TYPE_3 = 2;         //暂无更多刷新样式
 	
 
 	public CommentsListAdapter(Context context, Post post, List<Comment> comments){
@@ -140,6 +140,7 @@ public class CommentsListAdapter extends BaseAdapter {
 			holder1.newsitemTime.setText(mpost.getTime());
 			holder1.newsitemHead.setText(mpost.getTitle());
 			holder1.newsitemContent.setText(mpost.getContent());
+			holder1.newsitemContent.setMaxLines(50);
 			break;
 		case TYPE_2:
 			holder2.commentsitemImage.setImageResource(R.drawable.head);

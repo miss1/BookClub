@@ -4,10 +4,47 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="findall"/>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#65FFFFCC">
+        
+        <ImageView
+            android:id="@+id/findall_imh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/laror" />
+        
+        <Button 
+            android:id="@+id/findall_buttonok"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="搜索"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:background="@drawable/a_selector_blue_button"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"/>
+        
+        <EditText 
+            android:id="@+id/findall_edfind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:hint="搜索帖子"
+            android:layout_toRightOf="@id/findall_imh"
+            android:layout_toLeftOf="@id/findall_buttonok"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:singleLine="true"/>
+    </RelativeLayout>
     
+    <ListView 
+        android:id="@+id/findall_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
