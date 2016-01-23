@@ -104,8 +104,10 @@ public class FindallActivity extends Activity implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Post post = listpo.get(position);
-				NewsCommentActivity.actionStart(FindallActivity.this, post);     //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面
+				if(listpo.size()!=0){
+					Post post = listpo.get(position);
+					NewsCommentActivity.actionStart(FindallActivity.this, post);     //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面
+				}			
 			}
 		});
 	}

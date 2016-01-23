@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.SaveListener;
 
@@ -107,6 +108,12 @@ public class RegistActivity extends Activity implements OnClickListener{
 		infomation.setLovebook("");
 		infomation.setLoveauthor("");
 		infomation.setBookstyle("");
+		
+		BmobACL acl = new BmobACL();         //创建一个ACL对象,设置访问权限
+		acl.setPublicReadAccess(true);         // 设置所有人可读的权限
+		acl.setWriteAccess(BmobUser.getCurrentUser(RegistActivity.this), true);      // 设置当前用户可写的权限
+		
+		infomation.setACL(acl);
 		infomation.save(this, new SaveListener() {
 			
 			@Override

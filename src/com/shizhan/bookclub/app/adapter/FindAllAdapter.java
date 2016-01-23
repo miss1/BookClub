@@ -48,7 +48,7 @@ public class FindAllAdapter extends BaseAdapter {
 	// 每个convert view都会调用此方法，获得当前所需要的view样式
 	@Override
 	public int getItemViewType(int position) {
-		if(getCount()==1){
+		if(fposts.size()==0){
 			return TYPE_3;
 		}else{
 			return TYPE_2;

@@ -7,6 +7,7 @@ import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.model.Post;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.GetServerTimeListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -65,6 +66,12 @@ public class WritefeelingActivity extends Activity implements OnClickListener{
 						post.setContent(content);
 						post.setTime(times);
 						post.setUser(user);
+						
+						BmobACL acl = new BmobACL();         //创建一个ACL对象,设置访问权限
+						acl.setPublicReadAccess(true);         // 设置所有人可读的权限
+						acl.setWriteAccess(BmobUser.getCurrentUser(WritefeelingActivity.this), true);    // 设置当前用户可写的权限
+						
+						post.setACL(acl);
 						post.save(WritefeelingActivity.this, new SaveListener() {
 							
 							@Override

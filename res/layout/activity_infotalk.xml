@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Talk"
-        android:layout_gravity="center"/>
+    <RelativeLayout 
+        android:id="@+id/infotalk_re"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#65FFFFCC">
+        
+        <TextView
+            android:id="@+id/infotalk_tv" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="沫世锦年"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"
+            android:textColor="#900099FF"/>
+        
+        <ImageView
+            android:id="@+id/infotalk_imh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/laror" />
+    </RelativeLayout>
+    
+    <ListView 
+        android:id="@+id/infotalk_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/infotalk_re"/>
 
-</LinearLayout>
+</RelativeLayout>
