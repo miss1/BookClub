@@ -75,6 +75,7 @@ public class FindallActivity extends Activity implements OnClickListener{
 	private void search(String key){
 		BmobQuery<Post> query = new BmobQuery<Post>();
 		query.addWhereContains("content", key);
+		query.order("-updatedAt");
 		query.include("user");
 		query.findObjects(FindallActivity.this, new FindListener<Post>() {
 			
@@ -82,7 +83,7 @@ public class FindallActivity extends Activity implements OnClickListener{
 			public void onSuccess(List<Post> arg0) {
 				listpo.clear();
 				for(Post post:arg0){
-					listpo.add(0,post);
+					listpo.add(post);
 				}
 				adapter.notifyDataSetChanged();         //数据改变，动态更新列表
 				listItemClick();                    //Item点击事件

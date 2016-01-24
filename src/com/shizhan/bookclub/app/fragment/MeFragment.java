@@ -134,8 +134,7 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			showWindow(v);
 			break;
 		case R.id.person_talk:
-			Intent intentt = new Intent(getActivity(), InfoTalkActivity.class);
-			startActivity(intentt);
+			InfoTalkActivity.actionStart(getActivity(), BmobUser.getCurrentUser(getActivity(), MyUsers.class));
 			break;
 		default:
 			break;

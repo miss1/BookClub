@@ -60,13 +60,14 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 	private void initInfo() {
 		BmobQuery<Post> query = new BmobQuery<Post>();                   //查询所有帖子，并显示到newsListview中
 		query.include("user");
+		query.order("-updatedAt");
 		query.findObjects(getActivity(), new FindListener<Post>() {
 			
 			@Override
 			public void onSuccess(List<Post> arg0) {
 				listp.clear();
 				for(Post post : arg0){
-					listp.add(0,post);
+					listp.add(post);
 				}
 				adapter.notifyDataSetChanged();         //数据改变，动态更新列表
 				listItemClick();                                  //Item点击事件

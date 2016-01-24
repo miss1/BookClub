@@ -38,6 +38,7 @@
         <activity android:name="com.shizhan.bookclub.app.FindallActivity"/>
         <activity android:name="com.shizhan.bookclub.app.WritefeelingActivity"/>
         <activity android:name="com.shizhan.bookclub.app.NewsCommentActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.PersonerInfoActivity"/>
     </application>
 
 </manifest>

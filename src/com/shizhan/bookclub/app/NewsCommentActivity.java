@@ -86,53 +86,13 @@ public class NewsCommentActivity extends Activity implements OnClickListener{
 			public void onItemClick(AdapterView<?> parent, View view,
 					final int position, long id) {
 				//点击第一项时，删除帖子
-				if(position == 0){                   //如果当前用户为帖子发布者，则弹出提示框是否删除帖子
+				if(position == 0){                   
+					//如果当前用户为帖子发布者，则弹出提示框是否删除帖子
 					if(post.getUser().getObjectId().equals(BmobUser.getCurrentUser(NewsCommentActivity.this).getObjectId())){
-						new AlertDialog.Builder(NewsCommentActivity.this).setTitle("删除帖子")
-						.setMessage("确定删除该帖子?")
-						.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								Post dpost = new Post();
-								dpost.setObjectId(post.getObjectId());                    //删除帖子
-								dpost.delete(NewsCommentActivity.this, new DeleteListener() {
-									
-									@Override
-									public void onSuccess() {           //删除帖子成功后，将该帖子的所有评论也删除
-										List<BmobObject> clist = new ArrayList<BmobObject>();
-										for(int i=0;i<list.size();i++){         //得到该帖子的所有评论
-											clist.add(list.get(i));
-										}
-										new BmobObject().deleteBatch(NewsCommentActivity.this, clist, new DeleteListener() {    //批量删除评论
-											
-											@Override
-											public void onSuccess() {
-												Toast.makeText(NewsCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-												finish();
-											}
-											
-											@Override
-											public void onFailure(int arg0, String arg1) {
-												Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();												
-											}
-										});
-										
-									}
-									
-									@Override
-									public void onFailure(int arg0, String arg1) {
-										Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
-									}
-								});
-							}
-						}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								
-							}
-						}).show();
+						deletePostTip(position);
+					}else{
+						//如果当前用户不是帖子发布者,则弹出提示框查看作者信息
+						checkAuthorInfoTip(position);
 					}
 				}else if(position==adapter.getCount()-1){              //点击最后一项Item时更新评论信息
 					TextView comment_reflash_tip = (TextView) view.findViewById(R.id.comment_reflash_tip);
@@ -141,45 +101,150 @@ public class NewsCommentActivity extends Activity implements OnClickListener{
 					comment_reflash_progressBar1.setVisibility(View.VISIBLE);
 					init();
 				}else{                  
-					//如果点击的那条评论发布者为当前用户或者当前用户为帖子发布者，则弹出提示框是否删除该评论
-					if(list.get(position-1).getUser().getObjectId().equals(BmobUser.getCurrentUser(NewsCommentActivity.this).getObjectId())
-							||post.getUser().getObjectId().equals(BmobUser.getCurrentUser(NewsCommentActivity.this).getObjectId())){
-						new AlertDialog.Builder(NewsCommentActivity.this).setTitle("删除评论")
-						.setMessage("确定删除该评论?")
-						.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								Comment dcomment = new Comment();
-								dcomment.setObjectId(list.get(position-1).getObjectId());            //删除该评论
-								dcomment.delete(NewsCommentActivity.this, new DeleteListener() {
-									
-									@Override
-									public void onSuccess() {
-										Toast.makeText(NewsCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-									}
-									
-									@Override
-									public void onFailure(int arg0, String arg1) {
-										Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
-									}
-								});
-							}
-						}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								
-							}
-						}).show();
+					//如果当前用户为帖子发布者，则弹出单选提示框选择删除该评论还是查看作者信息
+					if(post.getUser().getObjectId().equals(BmobUser.getCurrentUser(NewsCommentActivity.this).getObjectId())){
+						dePostorChInfoTip(position);
+					}else if(list.get(position-1).getUser().getObjectId().equals(BmobUser.getCurrentUser(NewsCommentActivity.this).getObjectId())){         
+						//如果当前用户不是帖子发布者而是评论发布者,则弹出提示框删除该评论
+						deleteCommentTip(position);
+					}else{
+						//如果当前用户既不是帖子发布者也不是评论发布者，则弹出提示框查看该评论作者信息
+						checkAuthorInfoTip(position);
 					}
 				}
 				
 			}
 		});
 	}
+
+	//单选提示框选择删除该评论或者查看作者信息
+	private void dePostorChInfoTip(final int position) {
+		new AlertDialog.Builder(NewsCommentActivity.this).setTitle("请选择")
+		.setIcon(android.R.drawable.ic_dialog_info)
+		.setSingleChoiceItems(new String[]{"查看作者信息", "删除该条评论", "取消"}, 0, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0:                //查看作者信息
+					checkAuthorInfoTip(position);
+					break;
+				case 1:               //删除该条评论
+					deleteCommentTip(position);
+					break;
+				case 2:              //取消
+					break;
+				}
+				dialog.dismiss();
+			}
+		}).show();
+	}
+
+	//提示框查看作者信息
+	private void checkAuthorInfoTip(final int position) {
+		new AlertDialog.Builder(NewsCommentActivity.this).setTitle("查看作者信息")
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if(position == 0){                //查看帖子作者信息
+					PersonerInfoActivity.actionStart(NewsCommentActivity.this, post.getUser());
+				}else{                        //查看评论作者信息
+					PersonerInfoActivity.actionStart(NewsCommentActivity.this, list.get(position-1).getUser());
+				}
+			}
+		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		}).show();
+	}
 	
-	//上一Activity调用这方法，将数据传递到本界面
+	//提示框删除该评论
+	private void deleteCommentTip(final int position) {
+		new AlertDialog.Builder(NewsCommentActivity.this).setTitle("删除评论")
+		.setMessage("确定删除该评论?")
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Comment dcomment = new Comment();
+				dcomment.setObjectId(list.get(position-1).getObjectId());            //删除该评论
+				dcomment.delete(NewsCommentActivity.this, new DeleteListener() {
+						
+					@Override
+					public void onSuccess() {
+						Toast.makeText(NewsCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+					}
+						
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+					
+			}
+		}).show();
+			
+	}
+
+	//提示框是否删除帖子
+	private void deletePostTip(int position) {
+		new AlertDialog.Builder(NewsCommentActivity.this).setTitle("删除帖子")
+		.setMessage("确定删除该帖子?")
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Post dpost = new Post();
+				dpost.setObjectId(post.getObjectId());                    //删除帖子
+				dpost.delete(NewsCommentActivity.this, new DeleteListener() {
+					
+					@Override
+					public void onSuccess() {           //删除帖子成功后，将该帖子的所有评论也删除
+						List<BmobObject> clist = new ArrayList<BmobObject>();
+						for(int i=0;i<list.size();i++){         //得到该帖子的所有评论
+							clist.add(list.get(i));
+						}
+						new BmobObject().deleteBatch(NewsCommentActivity.this, clist, new DeleteListener() {    //批量删除评论
+							
+							@Override
+							public void onSuccess() {
+								Toast.makeText(NewsCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+								finish();
+							}
+							
+							@Override
+							public void onFailure(int arg0, String arg1) {
+								Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();												
+							}
+						});
+						
+					}
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(NewsCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		}).show();		
+	}
+
+	//上一Activity调用这方法，跳转到本界面并将数据传递到本界面
 	public static void actionStart(Context context, Post post){
 		Intent intent = new Intent(context, NewsCommentActivity.class);
 		Bundle bundle = new Bundle();
