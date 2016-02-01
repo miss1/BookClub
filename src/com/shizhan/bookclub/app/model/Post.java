@@ -2,7 +2,6 @@ package com.shizhan.bookclub.app.model;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.datatype.BmobRelation;
 
 public class Post extends BmobObject {
 	
@@ -11,7 +10,6 @@ public class Post extends BmobObject {
 	private String time;     //发帖时间 
 	private MyUsers user;     //帖子的发布者
 	private BmobFile image;    //帖子图片
-	private BmobRelation likes;  //多对多关系，用于存储喜欢该帖子的所有用户
 	
 	public String getTitle() {
 		return title;
@@ -53,12 +51,16 @@ public class Post extends BmobObject {
 		this.image = image;
 	}
 
-	public BmobRelation getLikes() {
-		return likes;
-	}
-
-	public void setLikes(BmobRelation likes) {
-		this.likes = likes;
+	//为了方便使用List的contains方法,必须重写equals方法
+	public boolean equals(Object obj){
+		if(obj==this){
+			return true;
+		}
+		if(obj instanceof Post){
+			Post post = (Post) obj;
+			return this.getObjectId().equals(post.getObjectId());
+		}
+		return false;	
 	}
 	
 }

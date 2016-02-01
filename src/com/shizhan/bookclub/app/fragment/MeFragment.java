@@ -28,9 +28,11 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
 
+import com.shizhan.bookclub.app.ChangePasswordActivity;
 import com.shizhan.bookclub.app.InfoEditeActivity;
-import com.shizhan.bookclub.app.InfoTalkActivity;
+import com.shizhan.bookclub.app.PersonPostActivity;
 import com.shizhan.bookclub.app.LoginActivity;
+import com.shizhan.bookclub.app.PostCollectActivity;
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.adapter.InfoShowAdapter;
 import com.shizhan.bookclub.app.model.Information;
@@ -64,6 +66,8 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		super.onAttach(activity);
 		grouplist = new ArrayList<String>();
 		grouplist.add("编辑资料");
+		grouplist.add("我的收藏");
+		grouplist.add("修改密码");
 		grouplist.add("退       出");
 		layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -127,14 +131,15 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		
 	}
 
+	//点击事件
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.person_edite:
+		case R.id.person_edite:      //点击图标，显示下拉选择框
 			showWindow(v);
 			break;
-		case R.id.person_talk:
-			InfoTalkActivity.actionStart(getActivity(), BmobUser.getCurrentUser(getActivity(), MyUsers.class));
+		case R.id.person_talk:         //点击TextView，跳转到我的帖子界面
+			PersonPostActivity.actionStart(getActivity(), BmobUser.getCurrentUser(getActivity(), MyUsers.class));
 			break;
 		default:
 			break;
@@ -201,7 +206,15 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 					startActivity(intent);
 					popupWindow.dismiss();
 					break;
-				case 1:                     //退出当前账号,跳转到登陆界面
+				case 1:                     //跳转到我的收藏界面，显示我收藏的帖子
+					PostCollectActivity.actionStart(getActivity());
+					popupWindow.dismiss();
+					break;
+				case 2:                     //修改密码,跳转到修改密码界面
+					ChangePasswordActivity.actionStart(getActivity());
+					popupWindow.dismiss();
+					break;
+				case 3:                     //退出当前账号,跳转到登陆界面
 					BmobUser.logOut(getActivity());
 					Intent intentl = new Intent(getActivity(), LoginActivity.class);
 					startActivity(intentl);

@@ -34,11 +34,13 @@
         <activity android:name="com.shizhan.bookclub.app.RegistActivity"/>
         <activity android:name="com.shizhan.bookclub.app.InfoEditeActivity"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name="com.shizhan.bookclub.app.InfoTalkActivity"/>
-        <activity android:name="com.shizhan.bookclub.app.FindallActivity"/>
-        <activity android:name="com.shizhan.bookclub.app.WritefeelingActivity"/>
-        <activity android:name="com.shizhan.bookclub.app.NewsCommentActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.PersonPostActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.FindPostActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.WritePostActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.PostCommentActivity"/>
         <activity android:name="com.shizhan.bookclub.app.PersonerInfoActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.PostCollectActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.ChangePasswordActivity"/>
     </application>
 
 </manifest>

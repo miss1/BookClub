@@ -18,10 +18,10 @@ import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 
-import com.shizhan.bookclub.app.FindallActivity;
-import com.shizhan.bookclub.app.NewsCommentActivity;
+import com.shizhan.bookclub.app.FindPostActivity;
+import com.shizhan.bookclub.app.PostCommentActivity;
 import com.shizhan.bookclub.app.R;
-import com.shizhan.bookclub.app.WritefeelingActivity;
+import com.shizhan.bookclub.app.WritePostActivity;
 import com.shizhan.bookclub.app.adapter.NewsListAdapter;
 import com.shizhan.bookclub.app.model.Post;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView;
@@ -88,7 +88,7 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Post post = listp.get(position-1);
-				NewsCommentActivity.actionStart(getActivity(), post);      //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面
+				PostCommentActivity.actionStart(getActivity(), post);      //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面
 			}
 		});
 	}
@@ -98,11 +98,11 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.news_find:
-			Intent intentf = new Intent(getActivity(), FindallActivity.class);    //跳转到查找界面
+			Intent intentf = new Intent(getActivity(), FindPostActivity.class);    //跳转到查找界面
 			startActivity(intentf);
 			break;
 		case R.id.news_edit:
-			Intent intentw = new Intent(getActivity(), WritefeelingActivity.class);    //跳转到写帖子界面
+			Intent intentw = new Intent(getActivity(), WritePostActivity.class);    //跳转到写帖子界面
 			startActivity(intentw);
 			break;
 		default:

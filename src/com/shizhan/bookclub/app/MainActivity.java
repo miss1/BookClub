@@ -9,6 +9,7 @@ import com.shizhan.bookclub.app.fragment.ReadFragment;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -37,12 +38,15 @@ public class MainActivity extends Activity implements OnClickListener{
 	private TextView messageText;
 	
 	private FragmentManager fragmentManager;   //用于对Fragment进行管理
+	
+	public static MainActivity instance;     //静态变量，初始化为this，方便其他Activity调用以finish()本个Activity
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		instance = this;
 		//初始化布局元素
 		initViews();
 		fragmentManager = getFragmentManager();
@@ -192,4 +196,5 @@ public class MainActivity extends Activity implements OnClickListener{
 			transaction.hide(messageFragment);
 		}
 	}
+
 }
