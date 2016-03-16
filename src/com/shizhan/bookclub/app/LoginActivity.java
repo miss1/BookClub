@@ -1,7 +1,5 @@
 package com.shizhan.bookclub.app;
 
-import com.shizhan.bookclub.app.model.MyUsers;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.listener.SaveListener;
+
+import com.shizhan.bookclub.app.model.MyUsers;
 
 public class LoginActivity extends Activity implements OnClickListener{
 	
@@ -43,7 +43,7 @@ public class LoginActivity extends Activity implements OnClickListener{
 			MyUsers use = new MyUsers();
 			use.setUsername(lusername);
 			use.setPassword(lpassword);
-			use.login(LoginActivity.this, new SaveListener() {
+			use.login(this, new SaveListener() {
 				
 				@Override
 				public void onSuccess() {

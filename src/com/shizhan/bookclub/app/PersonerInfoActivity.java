@@ -3,14 +3,6 @@ package com.shizhan.bookclub.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
-
-import com.shizhan.bookclub.app.adapter.InfoShowAdapter;
-import com.shizhan.bookclub.app.model.Information;
-import com.shizhan.bookclub.app.model.InformationShow;
-import com.shizhan.bookclub.app.model.MyUsers;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +15,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.listener.ConversationListener;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+
+import com.shizhan.bookclub.app.adapter.InfoShowAdapter;
+import com.shizhan.bookclub.app.event.ChatEvent;
+import com.shizhan.bookclub.app.model.Information;
+import com.shizhan.bookclub.app.model.InformationShow;
+import com.shizhan.bookclub.app.model.MyUsers;
 
 public class PersonerInfoActivity extends Activity implements OnClickListener{
 	
@@ -30,7 +35,7 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 	private TextView personInfoTalk;
 	private TextView personInfoName;
 	private ListView personInfoList;
-	private Button personInfoAddf;
+	private Button personInfosendM;
 	
 	private MyUsers user;
 	private InfoShowAdapter adapter;                    
@@ -49,11 +54,11 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 		personInfoTalk = (TextView) findViewById(R.id.personinfo_talk);
 		personInfoName = (TextView) findViewById(R.id.personinfo_name);
 		personInfoList = (ListView) findViewById(R.id.personinfo_list);
-		personInfoAddf = (Button) findViewById(R.id.personinfo_addf);
+		personInfosendM = (Button) findViewById(R.id.personinfo_sendM);
 		
 		personInfoBack.setOnClickListener(this);
 		personInfoTalk.setOnClickListener(this);
-		personInfoAddf.setOnClickListener(this);
+		personInfosendM.setOnClickListener(this);
 		
 		personInfoName.setText(user.getUserId());
 		initInfo();
@@ -115,12 +120,36 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 		case R.id.personinfo_talk:
 			PersonPostActivity.actionStart(PersonerInfoActivity.this, user);
 			break;
-		case R.id.personinfo_addf:
-			
+		case R.id.personinfo_sendM:
+			sendMessage();
 			break;
 		default:
 			break;
 		}
 		
 	}
+
+	private void sendMessage() {
+		BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(), user.getUserId(), null);
+		ChatEvent event = new ChatEvent(info);
+		onEvent(event);
+	}
+
+	public void onEvent(ChatEvent event){
+        //如果需要更新用户资料，开发者只需要传新的info进去就可以了
+        BmobIM.getInstance().startPrivateConversation(event.info, new ConversationListener() {
+            @Override
+            public void done(BmobIMConversation c, BmobException e) {
+                if(e==null){
+                	Intent intent = new Intent(PersonerInfoActivity.this, ChatActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("c", c);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(PersonerInfoActivity.this, e.getMessage()+"("+e.getErrorCode()+")", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 }

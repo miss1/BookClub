@@ -30,8 +30,8 @@ import cn.bmob.v3.listener.FindListener;
 
 import com.shizhan.bookclub.app.ChangePasswordActivity;
 import com.shizhan.bookclub.app.InfoEditeActivity;
-import com.shizhan.bookclub.app.PersonPostActivity;
 import com.shizhan.bookclub.app.LoginActivity;
+import com.shizhan.bookclub.app.PersonPostActivity;
 import com.shizhan.bookclub.app.PostCollectActivity;
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.adapter.InfoShowAdapter;

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout
+        android:id="@+id/chat_re1" 
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#65FFFFCC">
+        
+        <ImageView
+            android:id="@+id/chat_imh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/laror" />
+
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="消息"
+            android:textSize="18sp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/chat_imh"
+            android:layout_marginLeft="5dp"
+            android:textColor="#900099FF"/>
+        
+        <TextView 
+            android:id="@+id/chat_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="拉拉"
+            android:textSize="20sp"
+            android:textColor="#900099FF"/>
+        
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/chat_lin2" 
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="#65FFFFCC"
+        android:layout_alignParentBottom="true">
+        
+        <EditText 
+            android:id="@+id/chat_edchat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/edit_text"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:minLines="1"
+            android:scrollbars="vertical"
+            android:textSize="16sp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:hint="回复楼主"/>
+        
+        <Button 
+            android:id="@+id/chat_buok"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/a_selector_blue_button"
+            android:textColor="#FFFFFF"
+            android:text="发送"
+            android:textSize="16sp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+    </LinearLayout>
+    
+    <com.shizhan.bookclub.app.mylistview.ReFlashListView 
+        android:id="@+id/chat_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/chat_re1"
+        android:layout_above="@id/chat_lin2"
+        android:divider="#0000"/>
+
+</RelativeLayout>

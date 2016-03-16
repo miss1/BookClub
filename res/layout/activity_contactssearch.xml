@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#65FFFFCC">
+        
+        <LinearLayout 
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:background="@drawable/a_shape_regist"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4">
+            
+            <ImageView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/findf"
+                android:layout_marginLeft="6dp"
+                android:layout_gravity="center_vertical"/>
+            
+            <EditText 
+                android:id="@+id/contactsearch_contact"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="5dp"
+                android:background="@null"
+                android:layout_gravity="center_vertical"
+                android:singleLine="true"
+                android:hint="账号/昵称/群聊"
+                android:gravity="center_vertical"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        
+        <TextView 
+            android:id="@+id/contactsearch_search"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:text="搜索"
+            android:textSize="18sp"
+            android:textColor="#900099FF"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    
+    <ListView 
+        android:id="@+id/contactsearch_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+    </ListView>
+
+</LinearLayout>

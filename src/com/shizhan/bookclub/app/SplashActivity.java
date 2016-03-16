@@ -1,12 +1,11 @@
 package com.shizhan.bookclub.app;
 
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobUser;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
+import cn.bmob.v3.BmobUser;
 
 public class SplashActivity extends Activity {
 	
@@ -15,7 +14,6 @@ public class SplashActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_splash);
-		Bmob.initialize(this, "4b0291fca472bb6058b5d5f1f05fb696");
 		BmobUser bmobUser = BmobUser.getCurrentUser(this);
 		if(bmobUser!=null){
 			Intent intent = new Intent(SplashActivity.this, MainActivity.class);

@@ -1,8 +1,5 @@
 package com.shizhan.bookclub.app;
 
-import com.shizhan.bookclub.app.model.Information;
-import com.shizhan.bookclub.app.model.MyUsers;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +12,9 @@ import android.widget.Toast;
 import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.SaveListener;
+
+import com.shizhan.bookclub.app.model.Information;
+import com.shizhan.bookclub.app.model.MyUsers;
 
 public class RegistActivity extends Activity implements OnClickListener{
 	
@@ -57,7 +57,7 @@ public class RegistActivity extends Activity implements OnClickListener{
 			nicheng = rgnicheng.getText().toString();
 			String mima = rgmima.getText().toString();
 			String mimas = rgmimas.getText().toString();
-			MyUsers user = new MyUsers();
+			final MyUsers user = new MyUsers();
             if(!(mima.equals(mimas))){
 				Toast.makeText(RegistActivity.this, "两次输入的密码不相同", Toast.LENGTH_SHORT).show();
 				rgmima.setText("");

@@ -1,14 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="这是联系人界面"
-        android:textSize="20sp"/>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#75FFFFCC">
+        
+        <TextView
+            android:id="@+id/contacts_addfreand" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="搜索好友"
+            android:textColor="#900099FF"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+        
+        <TextView 
+            android:id="@+id/contacts_addgroupc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发起群聊"
+            android:textSize="18sp"
+            android:textColor="#900099FF"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/contacts_searchfreand" 
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/a_shape_regist"
+        android:orientation="vertical"
+        android:layout_marginTop="5dp">
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true">
+            
+            <ImageView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/findf"
+                android:layout_gravity="center_vertical"/>
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="搜索会话"
+                android:layout_marginLeft="5dp"
+                android:textSize="16sp"
+                android:textColor="#0099FF"/>
+        </LinearLayout>
+    </RelativeLayout>
 
-</RelativeLayout>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+        
+        <LinearLayout
+            android:id="@+id/contacts_nofrend" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+            
+            <ImageView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/miniong"
+                android:layout_gravity="center_horizontal"/>
+            
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="还没有会话哦"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+        
+        <com.shizhan.bookclub.app.mylistview.ReFlashListView
+            android:id="@+id/contacts_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </com.shizhan.bookclub.app.mylistview.ReFlashListView>
+
+    </RelativeLayout>
+
+</LinearLayout>

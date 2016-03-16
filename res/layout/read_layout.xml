@@ -3,10 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="这是阅读界面"
-        android:textSize="20sp"/>
+    <RelativeLayout 
+        android:id="@+id/read_rl"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#75FFFFCC">
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/a_shape_regist"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
+            
+            <Button 
+                android:id="@+id/read_onlineread"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="阅读"
+                android:textSize="16sp"
+                android:layout_margin="2dp"
+                android:textColor="#0099FF"
+                android:background="@drawable/a_shap_button_onclick"/>
+            
+            <Button 
+                android:id="@+id/read_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="附近"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/a_shape_bluebutton_normal"
+                android:layout_marginRight="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"/>
+        </LinearLayout>
+        
+    </RelativeLayout>
+    
+    <FrameLayout 
+        android:id="@+id/read_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/read_rl">
+        
+    </FrameLayout>
+    
 </RelativeLayout>

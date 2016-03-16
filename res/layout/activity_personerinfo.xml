@@ -71,13 +71,13 @@
         android:background="#65FFFFCC">
         
         <Button 
-            android:id="@+id/personinfo_addf"
+            android:id="@+id/personinfo_sendM"
             android:layout_width="match_parent"
             android:layout_height="38dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_centerInParent="true"
-            android:text="加好友"
+            android:text="发消息"
             android:textColor="#FFFFFF"
             android:background="@drawable/a_selector_blue_button"/>
     </RelativeLayout>

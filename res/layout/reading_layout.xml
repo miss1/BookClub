@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <RelativeLayout
+        android:id="@+id/reading_search" 
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/a_shape_regist"
+        android:orientation="vertical"
+        android:layout_marginTop="5dp">
+        
+        <RelativeLayout 
+            android:id="@+id/reading_search_im"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="3dp"
+            android:layout_centerVertical="true">
+            
+            <ImageView
+                android:id="@+id/reading_search_imsc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/findf"/>
+
+            <ImageView
+                android:id="@+id/reading_search_imde"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/delete" 
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+        
+        <EditText 
+            android:id="@+id/reading_search_ed"
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:background="@null"
+            android:layout_toLeftOf="@id/reading_search_im"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="5dp"
+            android:singleLine="true"
+            android:hint="移动书城"/>
+    </RelativeLayout>
+    
+    <ListView 
+        android:id="@+id/reading_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/reading_search"
+        android:layout_marginTop="5dp">
+        
+    </ListView>
+
+</RelativeLayout>

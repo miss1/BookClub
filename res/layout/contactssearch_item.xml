@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <ImageView 
+        android:id="@+id/contactsearch_itemImage"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/head"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"/>
+    
+    <TextView 
+        android:id="@+id/contactsearch_itemAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="沫世锦年"
+        android:textSize="19sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/contactsearch_itemImage"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"/>
+    
+    <TextView 
+        android:id="@+id/contactsearch_itemId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(123456)"
+        android:textSize="19sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/contactsearch_itemAuthor"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"/>
+    
+    <TextView 
+        android:id="@+id/contactsearch_geqian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="喜欢生命里只有单纯的盼望，只有一种安定和缓慢的成长。"
+        android:textSize="20sp"
+        android:textColor="#666666"
+        android:layout_toRightOf="@id/contactsearch_itemImage"
+        android:layout_below="@id/contactsearch_itemAuthor"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:singleLine="true"/>
+    
+</RelativeLayout>

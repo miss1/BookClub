@@ -1,41 +1,49 @@
 package com.shizhan.bookclub.app;
 
-import com.shizhan.bookclub.app.fragment.ContactsFragment;
-import com.shizhan.bookclub.app.fragment.MeFragment;
-import com.shizhan.bookclub.app.fragment.MessageFragment;
-import com.shizhan.bookclub.app.fragment.NewsFragment;
-import com.shizhan.bookclub.app.fragment.ReadFragment;
-
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.core.ConnectionStatus;
+import cn.bmob.newim.event.MessageEvent;
+import cn.bmob.newim.event.OfflineMessageEvent;
+import cn.bmob.newim.listener.ConnectListener;
+import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+
+import com.shizhan.bookclub.app.fragment.MessageFragment;
+import com.shizhan.bookclub.app.fragment.MeFragment;
+import com.shizhan.bookclub.app.fragment.NewsFragment;
+import com.shizhan.bookclub.app.fragment.ReadFragment;
+import com.shizhan.bookclub.app.model.MyUsers;
 
 public class MainActivity extends Activity implements OnClickListener{
 
 	private ReadFragment readFragment;
 	private NewsFragment newsFragment;
 	private MeFragment meFragment;
-	private ContactsFragment contactsFragment;
-	private MessageFragment messageFragment;
+	private MessageFragment contactsFragment;
 	
 	private View readLayout;
 	private View newsLayout;
 	private View meLayout;
-	private View contactsLayout;
 	private View messageLayout;
 	
 	private TextView readText;
 	private TextView newsText;
 	private TextView meText;
-	private TextView contactsText;
 	private TextView messageText;
+	private ImageView messageTips;
 	
 	private FragmentManager fragmentManager;   //用于对Fragment进行管理
 	
@@ -46,12 +54,32 @@ public class MainActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		//连接服务器
+		MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
+		BmobIM.connect(user.getObjectId(), new ConnectListener() {
+			
+			@Override
+			public void done(String arg0, BmobException arg1) {
+				if (arg1 == null) {
+		            Log.i("bmobIm", "connect success");
+		        } else {
+		            Log.i("bmobIm",arg1.getErrorCode() + "/" + arg1.getMessage());
+		        }				
+			}
+		});
+		BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
+            @Override
+            public void onChange(ConnectionStatus status) {
+                Toast.makeText(MainActivity.this, "" + status.getMsg(), Toast.LENGTH_SHORT);
+            }
+        });
+		
 		instance = this;
 		//初始化布局元素
 		initViews();
 		fragmentManager = getFragmentManager();
-		//第一次启动时选中第2个Tab
-		setTabSeclection(2);
+		//第一次启动时选中第1个Tab
+		setTabSeclection(1);
 	}
 
 	/*获取每个需要用到的控件实例，并设置好必要的点击事件*/
@@ -59,19 +87,17 @@ public class MainActivity extends Activity implements OnClickListener{
 		readLayout = findViewById(R.id.read_layout);
 		newsLayout = findViewById(R.id.news_layout);
 		meLayout = findViewById(R.id.me_layout);
-		contactsLayout = findViewById(R.id.contacts_layout);
 		messageLayout = findViewById(R.id.message_layout);
 		
 		readText = (TextView) findViewById(R.id.read_text);
 		newsText = (TextView) findViewById(R.id.news_text);
 		meText = (TextView) findViewById(R.id.me_text);
-		contactsText = (TextView) findViewById(R.id.contacts_text);
 		messageText = (TextView) findViewById(R.id.message_text);
+		messageTips = (ImageView) findViewById(R.id.message_tips);
 		
 		readLayout.setOnClickListener(this);
 		newsLayout.setOnClickListener(this);
 		meLayout.setOnClickListener(this);
-		contactsLayout.setOnClickListener(this);
 		messageLayout.setOnClickListener(this);
 	}
 
@@ -81,17 +107,14 @@ public class MainActivity extends Activity implements OnClickListener{
 		case R.id.message_layout:
 			setTabSeclection(0);
 			break;
-		case R.id.contacts_layout:
+		case R.id.read_layout:
 			setTabSeclection(1);
 			break;
-		case R.id.read_layout:
+		case R.id.news_layout:
 			setTabSeclection(2);
 			break;
-		case R.id.news_layout:
-			setTabSeclection(3);
-			break;
 		case R.id.me_layout:
-			setTabSeclection(4);
+			setTabSeclection(3);
 			break;
 		default:
 			break;
@@ -109,29 +132,18 @@ public class MainActivity extends Activity implements OnClickListener{
 		hideFragments(transaction);
 		switch (index) {
 		case 0:
-			messageText.setTextColor(Color.WHITE);
-			if(messageFragment == null){
-				// 如果messageFragment为空，则创建一个并添加到界面上
-				messageFragment = new MessageFragment();
-				transaction.add(R.id.content, messageFragment);
-			}else{
-				// 如果messageFragment不为空，则直接将它显示出来
-				transaction.show(messageFragment);
-			}
-			break;
-		case 1:
-			contactsText.setTextColor(Color.WHITE);
+			messageText.setTextColor(Color.GREEN);
 			if(contactsFragment == null){
-				// 如果contactsFragment为空，则创建一个并添加到界面上
-				contactsFragment = new ContactsFragment();
+				// 如果messageFragment为空，则创建一个并添加到界面上
+				contactsFragment = new MessageFragment();
 				transaction.add(R.id.content, contactsFragment);
 			}else{
-				// 如果contactsFragment不为空，则直接将它显示出来
+				// 如果messageFragment不为空，则直接将它显示出来
 				transaction.show(contactsFragment);
 			}
 			break;
-		case 2:
-			readText.setTextColor(Color.WHITE);
+		case 1:
+			readText.setTextColor(Color.GREEN);
 			if(readFragment == null){
 				// 如果readFragment为空，则创建一个并添加到界面上
 				readFragment = new ReadFragment();
@@ -141,8 +153,8 @@ public class MainActivity extends Activity implements OnClickListener{
 				transaction.show(readFragment);
 			}
 			break;
-		case 3:
-			newsText.setTextColor(Color.WHITE);
+		case 2:
+			newsText.setTextColor(Color.GREEN);
 			if(newsFragment == null){
 				// 如果newsFragment为空，则创建一个并添加到界面上
 				newsFragment = new NewsFragment();
@@ -152,8 +164,8 @@ public class MainActivity extends Activity implements OnClickListener{
 				transaction.show(newsFragment);
 			}
 			break;
-		case 4:
-			meText.setTextColor(Color.WHITE);
+		case 3:
+			meText.setTextColor(Color.GREEN);
 			if(meFragment == null){
 				// 如果meFragment为空，则创建一个并添加到界面上
 				meFragment = new MeFragment();
@@ -175,7 +187,6 @@ public class MainActivity extends Activity implements OnClickListener{
 		newsText.setTextColor(Color.parseColor("#3333FF"));
 		meText.setTextColor(Color.parseColor("#3333FF"));
 		messageText.setTextColor(Color.parseColor("#3333FF"));
-		contactsText.setTextColor(Color.parseColor("#3333FF"));
 	}
 	
 	/*将所有的Fragment都设置为隐藏状态*/
@@ -192,9 +203,30 @@ public class MainActivity extends Activity implements OnClickListener{
 		if(contactsFragment != null){
 			transaction.hide(contactsFragment);
 		}
-		if(messageFragment != null){
-			transaction.hide(messageFragment);
-		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		checkRedPoint();
+	}
+
+	//注册消息接收事件
+	public void onEventMainThread(MessageEvent event){
+		checkRedPoint();
+	}
+	
+	//注册离线消息接收事件
+	public void onEventMainThread(OfflineMessageEvent event){
+	    checkRedPoint();
+	}
+	
+	private void checkRedPoint() {
+		if(BmobIM.getInstance().getAllUnReadCount()>0){
+			messageTips.setVisibility(View.VISIBLE);
+		}else{
+			messageTips.setVisibility(View.GONE);
+		}		
 	}
 
 }
