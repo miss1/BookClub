@@ -5,13 +5,13 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
+
 import com.shizhan.bookclub.app.R;
+import com.shizhan.bookclub.app.WebViewActivity;
 import com.shizhan.bookclub.app.adapter.ReadingAdapter;
 import com.shizhan.bookclub.app.model.Library;
 
 import android.app.Fragment;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -47,7 +47,6 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 		adapter = new ReadingAdapter(getActivity(), lists);
 		readingList.setAdapter(adapter);
 		queryAll();
-		listItemClick();
 		
 		readingSearchImsc.setOnClickListener(this);
 		readingSearchImde.setOnClickListener(this);
@@ -93,6 +92,7 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 					lists.add(library);
 				}
 				adapter.notifyDataSetChanged();
+				listItemClick();
 			}
 			
 			@Override
@@ -115,6 +115,7 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 					lists.add(library);
 				}
 				adapter.notifyDataSetChanged();
+				listItemClick();
 			}
 			
 			@Override
@@ -130,12 +131,12 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				if(lists.size() == 0)
+					return;
 				Library library = lists.get(position);
 				
 				//跳转到相应网页
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse(library.getUrl()));
-				startActivity(intent);
+				WebViewActivity.actionStart(getActivity(), library.getUrl());
 				
 				//访问量加1
 				int hot = Integer.parseInt(library.getHot())+1;
@@ -144,6 +145,7 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 				queryAll();
 			}
 		});
+		
 	}
 
 }

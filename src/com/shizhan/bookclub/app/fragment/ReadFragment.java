@@ -1,7 +1,5 @@
 package com.shizhan.bookclub.app.fragment;
 
-import com.shizhan.bookclub.app.R;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,6 +10,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.shizhan.bookclub.app.R;
 
 public class ReadFragment extends Fragment implements OnClickListener{
 	
@@ -56,7 +56,7 @@ public class ReadFragment extends Fragment implements OnClickListener{
 			readOnlineRead.setTextColor(Color.parseColor("#FFFFFF"));
 			readMap.setBackgroundResource(R.drawable.a_shap_button_onclick);
 			readMap.setTextColor(Color.parseColor("#0099FF"));
-			setTabSeclection(1);		
+			setTabSeclection(1);
 			break;
 		default:
 			break;

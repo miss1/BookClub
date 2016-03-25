@@ -38,6 +38,7 @@ public class LoginActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.login:
+			login.setText("µÇÂ¼ÖÐ...");
 			String lusername = username.getText().toString();
 			String lpassword = password.getText().toString();
 			MyUsers use = new MyUsers();
@@ -47,14 +48,16 @@ public class LoginActivity extends Activity implements OnClickListener{
 				
 				@Override
 				public void onSuccess() {
-					Toast.makeText(LoginActivity.this, "µÇÂ½³É¹¦", Toast.LENGTH_SHORT).show();
+					Toast.makeText(LoginActivity.this, "µÇÂ½³É¹¦", Toast.LENGTH_SHORT).show();					
 					Intent intentl = new Intent(LoginActivity.this, MainActivity.class);
 					startActivity(intentl);
+					login.setText("µÇÂ¼");
 					finish();
 				}
 				
 				@Override
 				public void onFailure(int arg0, String arg1) {
+					login.setText("µÇÂ¼");
 					Toast.makeText(LoginActivity.this, "µÇÂ½Ê§°Ü" + arg1, Toast.LENGTH_SHORT).show();				
 				}
 			});
