@@ -1,15 +1,27 @@
 package com.shizhan.bookclub.app.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images.Media;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +38,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 import com.shizhan.bookclub.app.ChangePasswordActivity;
 import com.shizhan.bookclub.app.InfoEditeActivity;
@@ -40,10 +55,13 @@ import com.shizhan.bookclub.app.model.InformationShow;
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
+@SuppressLint("NewApi")
 public class MeFragment extends Fragment implements OnClickListener,IReflashListener{
 	
 	private ImageView personEdite;
+	private ImageView personHead;
 	private TextView personTalk;
 	private TextView personName;
 	private ReFlashListView listInformation;      //自定义的下拉刷新ListView
@@ -60,6 +78,10 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	private List<String> grouplist;
 	private ArrayAdapter<String> arrAdapter;
 	private WindowManager windowManager;
+	
+	private ImageHeade imageHeade;
+	
+	public static final int CHOOSE_PHOTO = 1;
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -81,6 +103,7 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		personEdite = (ImageView) meLayout.findViewById(R.id.person_edite);
 		personTalk = (TextView) meLayout.findViewById(R.id.person_talk);
 		personName = (TextView) meLayout.findViewById(R.id.person_name);
+		personHead = (ImageView) meLayout.findViewById(R.id.person_head);
 		listInformation = (ReFlashListView) meLayout.findViewById(R.id.list_information);
 		
 		adapter = new InfoShowAdapter(getActivity(), infolist);
@@ -90,12 +113,19 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		listInformation.setInterface(this);
 		personEdite.setOnClickListener(this);
 		personTalk.setOnClickListener(this);
+		personHead.setOnClickListener(this);
 		return meLayout;
 	}
 
 	//初始化信息
 	private void initInfo() {
 		MyUsers user = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
+		
+		if(user.getImageUrl() != null){
+			imageHeade = new ImageHeade(user.getImageUrl(), personHead);         //下载服务器上的头像并显示
+			imageHeade.setImageHead();
+		}
+		                                            
 		BmobQuery<Information> query = new BmobQuery<Information>();
 		query.addWhereEqualTo("user", user);
 		query.findObjects(getActivity(), new FindListener<Information>() {
@@ -140,6 +170,11 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			break;
 		case R.id.person_talk:         //点击TextView，跳转到我的帖子界面
 			PersonPostActivity.actionStart(getActivity(), BmobUser.getCurrentUser(getActivity(), MyUsers.class));
+			break;
+		case R.id.person_head:         //点击头像，获取本地图片更换头像并上传到服务器
+			Intent intent = new Intent("android.intent.action.GET_CONTENT");
+			intent.setType("image/*");
+			startActivityForResult(intent, CHOOSE_PHOTO);
 			break;
 		default:
 			break;
@@ -227,6 +262,114 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 				
 			}
 		});
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		getActivity();
+		if(resultCode == Activity.RESULT_OK){
+			if(Build.VERSION.SDK_INT >= 19){                           //判断手机系统版本号
+				handleImageOnKitKat(data);                             //4.4及以上版本使用这个方法处理图片
+			}else{
+				handleImageBeforeKitKat(data);                         //4.4及以下版本使用这个方法处理图片
+			}
+		}
+	}
+
+	//4.4及以上版本使用这个方法处理图片
+	private void handleImageOnKitKat(Intent data) {
+		String imagePath = null;
+		Uri uri = data.getData();
+		if(DocumentsContract.isDocumentUri(getActivity(), uri)){
+			//如果是Document类型的Uri，则通过document id处理
+			String docId = DocumentsContract.getDocumentId(uri);
+			if("com.android.providers.media.documents".equals(uri.getAuthority())){
+				String id = docId.split(":")[1];
+				String selection = MediaStore.Images.Media._ID + "=" + id;
+				imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+			}else if("com.android.providers.downloads.documents".equals(uri.getAuthority())){
+				Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+				imagePath = getImagePath(contentUri, null);
+			}
+		}else if("content".equalsIgnoreCase(uri.getScheme())){
+			//如果不是Document类型的Uri，则使用普通方式处理
+			imagePath = getImagePath(uri, null);
+		}
+		displayImage(imagePath);
+		uploadImage(imagePath);
+	}
+
+	//4.4及以下版本使用这个方法处理图片
+	private void handleImageBeforeKitKat(Intent data) {
+		Uri uri = data.getData();
+		String imagePath = getImagePath(uri, null);
+		displayImage(imagePath);
+		uploadImage(imagePath);
+	}
+	
+	private String getImagePath(Uri uri, String selection) {
+		String path = null;
+		Cursor cursor = getActivity().getContentResolver().query(uri, null, selection, null, null);
+		if(cursor != null){
+			if(cursor.moveToFirst()){
+				path = cursor.getString(cursor.getColumnIndex(Media.DATA));
+			}
+			cursor.close();
+		}
+		return path;
+	}
+	
+	ProgressDialog dialog = null;
+	
+	//将图片上传到服务器
+	private void uploadImage(String imagePath){
+		dialog = new ProgressDialog(getActivity());
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		dialog.setTitle("上传中");
+		dialog.setIndeterminate(false);
+		dialog.setCancelable(true);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.show();
+		final MyUsers user = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
+		final BmobFile bmobFile = new BmobFile(new File(imagePath));
+		bmobFile.uploadblock(getActivity(), new UploadFileListener() {
+			
+			@Override
+			public void onSuccess() {
+				user.setImageUrl(bmobFile.getFileUrl(getActivity()));
+				user.update(getActivity(), new UpdateListener() {
+					
+					@Override
+					public void onSuccess() {
+						dialog.dismiss();
+						Toast.makeText(getActivity(), "上传成功", Toast.LENGTH_SHORT).show();						
+					}
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						dialog.dismiss();
+						Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();					
+					}
+				});
+			}
+			
+			@Override
+			public void onFailure(int arg0, String arg1) {
+				dialog.dismiss();
+				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();				
+			}
+		});
+	}
+
+	//将图片直接显示出来
+	private void displayImage(String imagePath) {
+		System.out.println("path:"+imagePath);
+		if(imagePath != null){
+			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+			personHead.setImageBitmap(bitmap);
+		}else{
+			Toast.makeText(getActivity(), "failed to get image", Toast.LENGTH_SHORT).show();
+		}		
 	}
 
 }

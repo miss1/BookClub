@@ -5,7 +5,8 @@ import cn.bmob.v3.datatype.BmobRelation;
 
 public class MyUsers extends BmobUser {
 	
-	private String userId;    //账号
+	private String userId;       //账号
+	private String imageUrl;     //头像图片路径
 	private BmobRelation likes;  //多对多关系，用于存储喜欢该帖子的所有用户
 
 	public String getUserId() {
@@ -24,5 +25,12 @@ public class MyUsers extends BmobUser {
 		this.likes = likes;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 	
 }
