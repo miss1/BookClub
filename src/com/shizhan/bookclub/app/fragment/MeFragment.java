@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
@@ -56,6 +57,7 @@ import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
 import com.shizhan.bookclub.app.util.ImageHeade;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 @SuppressLint("NewApi")
 public class MeFragment extends Fragment implements OnClickListener,IReflashListener{
@@ -79,7 +81,10 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	private ArrayAdapter<String> arrAdapter;
 	private WindowManager windowManager;
 	
-	private ImageHeade imageHeade;
+	private ImageHeade imageHeade;             //下载头像并显示
+	
+	private ProgressBar progressBar;
+	private MyProgressBar myProgressBar;        //ProgressBar
 	
 	public static final int CHOOSE_PHOTO = 1;
 	
@@ -106,6 +111,11 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		personHead = (ImageView) meLayout.findViewById(R.id.person_head);
 		listInformation = (ReFlashListView) meLayout.findViewById(R.id.list_information);
 		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(getActivity(), null);
+		listInformation.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
+		
 		adapter = new InfoShowAdapter(getActivity(), infolist);
 		listInformation.setAdapter(adapter);
 		initInfo();
@@ -118,7 +128,8 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	}
 
 	//初始化信息
-	private void initInfo() {
+	private void initInfo() {	
+		
 		MyUsers user = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
 		
 		if(user.getImageUrl() != null){
@@ -151,10 +162,14 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 				infolist.add(bookstyle);
 				personName.setText(arg0.get(0).getNicheng());
 				adapter.notifyDataSetChanged();  //数据改变，动态更新列表
+				listInformation.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
+				listInformation.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_LONG).show();
 			}
 		});

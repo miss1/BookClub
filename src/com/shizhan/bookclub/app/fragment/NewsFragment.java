@@ -1,6 +1,7 @@
 package com.shizhan.bookclub.app.fragment;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
@@ -26,6 +28,7 @@ import com.shizhan.bookclub.app.adapter.NewsListAdapter;
 import com.shizhan.bookclub.app.model.Post;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView;
 import com.shizhan.bookclub.app.mylistview.ReFlashListView.IReflashListener;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 public class NewsFragment extends Fragment implements OnClickListener,IReflashListener{
 	
@@ -37,6 +40,11 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 	private NewsListAdapter adapter;
 	private List<Post> listp = new ArrayList<Post>();
 	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
+	
+	private long runDate;                     //连接服务器到服务器返回数据之间所隔得时间
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -47,6 +55,12 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 		
 		adapter = new NewsListAdapter(getActivity(), listp);
 		newsListview.setAdapter(adapter);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(getActivity(), null);
+		newsListview.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
+		
 		initInfo();
 		
 		newsListview.setInterface(this);
@@ -58,6 +72,8 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 
 	//初始化信息
 	private void initInfo() {
+		Date startDate = new Date(System.currentTimeMillis());           //本段程序运行的起始时间
+		
 		BmobQuery<Post> query = new BmobQuery<Post>();                   //查询所有帖子，并显示到newsListview中
 		query.include("user");
 		query.order("-updatedAt");
@@ -70,14 +86,22 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 					listp.add(post);
 				}
 				adapter.notifyDataSetChanged();         //数据改变，动态更新列表
+				newsListview.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				listItemClick();                                  //Item点击事件
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
+				newsListview.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 			}
 		});
+		
+		Date endDate = new Date(System.currentTimeMillis());             //本段程序运行的结束时间
+		runDate = endDate.getTime() - startDate.getTime();
+		System.out.println("runDate:"+runDate);
 	}
 
 	//newsListview 子项点击事件
@@ -115,14 +139,25 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 	@Override
 	public void onReflash() {
 		Handler handle = new Handler();
-		handle.postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
-				initInfo();
-				newsListview.reflashComplete();
-			}
-		}, 2000);
+		if(runDate > 2000){
+			handle.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					initInfo();
+					newsListview.reflashComplete();
+				}
+			}, runDate);
+		}else{
+			handle.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					initInfo();
+					newsListview.reflashComplete();
+				}
+			}, 2000);
+		}
 	}
 
 }

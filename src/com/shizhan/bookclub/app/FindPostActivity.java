@@ -8,6 +8,7 @@ import cn.bmob.v3.listener.FindListener;
 
 import com.shizhan.bookclub.app.adapter.FindAllAdapter;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class FindPostActivity extends Activity implements OnClickListener{
@@ -32,6 +34,9 @@ public class FindPostActivity extends Activity implements OnClickListener{
 	
 	private FindAllAdapter adapter;
 	private List<Post> listpo = new ArrayList<Post>();
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,9 @@ public class FindPostActivity extends Activity implements OnClickListener{
 		
 		adapter = new FindAllAdapter(FindPostActivity.this, listpo);
 		findAllList.setAdapter(adapter);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 
 	//点击事件处理
@@ -73,6 +81,8 @@ public class FindPostActivity extends Activity implements OnClickListener{
 	
 	//按关键字查找帖子
 	private void search(String key){
+		findAllList.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
 		BmobQuery<Post> query = new BmobQuery<Post>();
 		query.addWhereContains("content", key);
 		query.order("-updatedAt");
@@ -85,6 +95,8 @@ public class FindPostActivity extends Activity implements OnClickListener{
 				for(Post post:arg0){
 					listpo.add(post);
 				}
+				findAllList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				adapter.notifyDataSetChanged();         //数据改变，动态更新列表
 				listItemClick();                    //Item点击事件
 			}
@@ -92,6 +104,8 @@ public class FindPostActivity extends Activity implements OnClickListener{
 			@Override
 			public void onError(int arg0, String arg1) {
 				listpo.clear();
+				findAllList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				adapter.notifyDataSetChanged();
 				Toast.makeText(FindPostActivity.this, arg1, Toast.LENGTH_SHORT).show();
 			}

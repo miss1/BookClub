@@ -11,6 +11,7 @@ import cn.bmob.v3.listener.FindListener;
 import com.shizhan.bookclub.app.adapter.FindAllAdapter;
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,6 +37,9 @@ public class PostCollectActivity extends Activity implements OnClickListener{
 	private FindAllAdapter adapter;
 	private List<Post> cpost = new ArrayList<Post>();
 	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +51,10 @@ public class PostCollectActivity extends Activity implements OnClickListener{
 		
 		infoTalkTv.setText("我的收藏");
 		infoTalkImh.setOnClickListener(this);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		progressBar.setVisibility(View.VISIBLE);
 		
 		// 查询当前用户收藏的所有帖子
 		BmobQuery<Post> queryp = new BmobQuery<Post>();
@@ -62,6 +71,7 @@ public class PostCollectActivity extends Activity implements OnClickListener{
 				}
 				adapter = new FindAllAdapter(PostCollectActivity.this, cpost);
 				infoTalkList.setAdapter(adapter);
+				progressBar.setVisibility(View.GONE);
 				listItemClick();
 			}
 
@@ -70,7 +80,7 @@ public class PostCollectActivity extends Activity implements OnClickListener{
 				adapter = new FindAllAdapter(PostCollectActivity.this, cpost);
 				Toast.makeText(PostCollectActivity.this, arg1, Toast.LENGTH_SHORT).show();
 				infoTalkList.setAdapter(adapter);
-
+				progressBar.setVisibility(View.GONE);
 			}
 		});
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.model.Information;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ public class SearchUserAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ImageHeade imageHead;
 		ViewHolder holder = null;
 		if(convertView == null){
 			inflater = LayoutInflater.from(scontext);
@@ -57,7 +59,13 @@ public class SearchUserAdapter extends BaseAdapter {
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.searchitemImage.setImageResource(R.drawable.head);
+		
+		if(sinfos.get(position).getUser().getImageUrl() != null){
+			imageHead = new ImageHeade(sinfos.get(position).getUser().getImageUrl(), holder.searchitemImage);
+			imageHead.setImageHead();
+		}else{
+			holder.searchitemImage.setImageResource(R.drawable.head);
+		}	
 		holder.searchitemAuthor.setText(sinfos.get(position).getNicheng());
 		holder.searchitemId.setText("("+sinfos.get(position).getZhanghao()+")");
 		holder.searchitemgeqian.setText(sinfos.get(position).getGeqian());

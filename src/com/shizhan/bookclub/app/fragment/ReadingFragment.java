@@ -10,6 +10,7 @@ import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.WebViewActivity;
 import com.shizhan.bookclub.app.adapter.ReadingAdapter;
 import com.shizhan.bookclub.app.model.Library;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class ReadingFragment extends Fragment implements OnClickListener{
@@ -35,6 +37,9 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 	private ReadingAdapter adapter;
 	private List<Library> lists = new ArrayList<Library>();
 	
+	private ProgressBar progressBar;
+	private MyProgressBar myProgressBar;        //ProgressBar
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -46,6 +51,10 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 		
 		adapter = new ReadingAdapter(getActivity(), lists);
 		readingList.setAdapter(adapter);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(getActivity(), null);
+		
 		queryAll();
 		
 		readingSearchImsc.setOnClickListener(this);
@@ -81,6 +90,8 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 	
 	//按关键字查询
 	private void queryByKey(String key) {
+		readingList.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
 		BmobQuery<Library> query = new BmobQuery<Library>();
 		query.addWhereContains("name", key);
 		query.findObjects(getActivity(), new FindListener<Library>() {
@@ -91,12 +102,16 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 				for(Library library : arg0){
 					lists.add(library);
 				}
+				readingList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				adapter.notifyDataSetChanged();
 				listItemClick();
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
+				readingList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -104,6 +119,8 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 
 	//查询所有数据
 	private void queryAll() {
+		readingList.setVisibility(View.GONE);
+		progressBar.setVisibility(View.VISIBLE);
 		BmobQuery<Library> query = new BmobQuery<Library>();
 		query.order("-hot");
 		query.findObjects(getActivity(), new FindListener<Library>() {
@@ -114,12 +131,16 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 				for(Library library : arg0){
 					lists.add(library);
 				}
+				readingList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				adapter.notifyDataSetChanged();
 				listItemClick();
 			}
 			
 			@Override
 			public void onError(int arg0, String arg1) {
+				readingList.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
 				Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
 			}
 		});

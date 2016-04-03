@@ -6,6 +6,7 @@ import java.util.List;
 import com.shizhan.bookclub.app.adapter.FindAllAdapter;
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,9 @@ public class PersonPostActivity extends Activity implements OnClickListener{
 	private List<Post> inpost = new ArrayList<Post>();
 	
 	private MyUsers user;
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,10 @@ public class PersonPostActivity extends Activity implements OnClickListener{
 		infoTalkTv.setText(user.getUserId());
 		infoTalkImh.setOnClickListener(this);
 		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		progressBar.setVisibility(View.VISIBLE);
+		
 		BmobQuery<Post> query = new BmobQuery<Post>();
 		query.addWhereEqualTo("user", user);         //查询当前用户的所有帖子
 		query.order("-updatedAt");
@@ -62,6 +71,7 @@ public class PersonPostActivity extends Activity implements OnClickListener{
 				}
 				adapter = new FindAllAdapter(PersonPostActivity.this, inpost);
 				infoTalkList.setAdapter(adapter);
+				progressBar.setVisibility(View.GONE);
 				listItemClick();
 			}
 			
@@ -70,6 +80,7 @@ public class PersonPostActivity extends Activity implements OnClickListener{
 				adapter = new FindAllAdapter(PersonPostActivity.this, inpost);
 				Toast.makeText(PersonPostActivity.this, arg1, Toast.LENGTH_SHORT).show();
 				infoTalkList.setAdapter(adapter);
+				progressBar.setVisibility(View.GONE);
 			}
 		});
 		

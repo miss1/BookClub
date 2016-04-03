@@ -28,9 +28,11 @@ import com.shizhan.bookclub.app.event.ChatEvent;
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.InformationShow;
 import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
 public class PersonerInfoActivity extends Activity implements OnClickListener{
 	
+	private ImageView personInfoHead;
 	private ImageView personInfoBack;
 	private TextView personInfoTalk;
 	private TextView personInfoName;
@@ -50,6 +52,7 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 		Intent intent = getIntent();
 		user = (MyUsers) intent.getSerializableExtra("user");
 		
+		personInfoHead = (ImageView) findViewById(R.id.personinfo_head);
 		personInfoBack = (ImageView) findViewById(R.id.personinfo_back);
 		personInfoTalk = (TextView) findViewById(R.id.personinfo_talk);
 		personInfoName = (TextView) findViewById(R.id.personinfo_name);
@@ -61,6 +64,13 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 		personInfosendM.setOnClickListener(this);
 		
 		personInfoName.setText(user.getUserId());
+		
+		if(user.getImageUrl() != null){
+			ImageHeade imageHead = new ImageHeade(user.getImageUrl(), personInfoHead);
+			imageHead.setImageHead();
+		}else{
+			personInfoHead.setImageResource(R.drawable.head);
+		}
 		initInfo();
 	}
 	

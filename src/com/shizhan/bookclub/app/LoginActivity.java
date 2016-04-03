@@ -8,11 +8,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.bmob.v3.listener.SaveListener;
 
 import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 public class LoginActivity extends Activity implements OnClickListener{
 	
@@ -20,6 +22,9 @@ public class LoginActivity extends Activity implements OnClickListener{
 	private TextView regist;
 	private EditText username;
 	private EditText password;
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +37,16 @@ public class LoginActivity extends Activity implements OnClickListener{
 		regist = (TextView) findViewById(R.id.regist);
 		login.setOnClickListener(this);
 		regist.setOnClickListener(this);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.login:
-			login.setText("µÇÂ¼ÖÐ...");
+			progressBar.setVisibility(View.VISIBLE);
 			String lusername = username.getText().toString();
 			String lpassword = password.getText().toString();
 			MyUsers use = new MyUsers();
@@ -51,13 +59,13 @@ public class LoginActivity extends Activity implements OnClickListener{
 					Toast.makeText(LoginActivity.this, "µÇÂ½³É¹¦", Toast.LENGTH_SHORT).show();					
 					Intent intentl = new Intent(LoginActivity.this, MainActivity.class);
 					startActivity(intentl);
-					login.setText("µÇÂ¼");
+					progressBar.setVisibility(View.GONE);
 					finish();
 				}
 				
 				@Override
 				public void onFailure(int arg0, String arg1) {
-					login.setText("µÇÂ¼");
+					progressBar.setVisibility(View.GONE);
 					Toast.makeText(LoginActivity.this, "µÇÂ½Ê§°Ü" + arg1, Toast.LENGTH_SHORT).show();				
 				}
 			});

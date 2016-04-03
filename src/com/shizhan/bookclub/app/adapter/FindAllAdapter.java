@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class FindAllAdapter extends BaseAdapter {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ImageHeade imageHead;
 		ViewHolder2 holder2 = null;
 		ViewHolder3 holder3 = null;
 		int type = getItemViewType(position);
@@ -106,7 +108,12 @@ public class FindAllAdapter extends BaseAdapter {
 		// …Ë÷√◊ ‘¥
 		switch (type) {
 		case TYPE_2:
-			holder2.newsitemImage.setImageResource(R.drawable.head);
+			if(fposts.get(position).getUser().getImageUrl() != null){
+				imageHead = new ImageHeade(fposts.get(position).getUser().getImageUrl(), holder2.newsitemImage);
+				imageHead.setImageHead();
+			}else{
+				holder2.newsitemImage.setImageResource(R.drawable.head);
+			}			
 			holder2.newsitemAuthor.setText(fposts.get(position).getUser().getUserId());
 			holder2.newsitemHead.setText(fposts.get(position).getTitle());
 			holder2.newsitemTime.setText(fposts.get(position).getTime());

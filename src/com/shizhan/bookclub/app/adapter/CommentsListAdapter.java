@@ -5,6 +5,7 @@ import java.util.List;
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.model.Comment;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -77,6 +78,7 @@ public class CommentsListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ImageHeade imageHead;
 		ViewHolder1 holder1 = null;
 		ViewHolder2 holder2 = null;
 		ViewHolder3 holder3 = null;
@@ -135,7 +137,12 @@ public class CommentsListAdapter extends BaseAdapter {
 		// 设置资源
 		switch (type) {
 		case TYPE_1:
-			holder1.newsitemImage.setImageResource(R.drawable.head);
+			if(mpost.getUser().getImageUrl() != null){
+				imageHead = new ImageHeade(mpost.getUser().getImageUrl(), holder1.newsitemImage);
+				imageHead.setImageHead();
+			}else{
+				holder1.newsitemImage.setImageResource(R.drawable.head);
+			}
 			holder1.newsitemAuthor.setText(mpost.getUser().getUserId());
 			holder1.newsitemTime.setText(mpost.getTime());
 			holder1.newsitemHead.setText(mpost.getTitle());
@@ -143,7 +150,12 @@ public class CommentsListAdapter extends BaseAdapter {
 			holder1.newsitemContent.setMaxLines(50);
 			break;
 		case TYPE_2:
-			holder2.commentsitemImage.setImageResource(R.drawable.head);
+			if(commentList.get(position-1).getUser().getImageUrl() != null){
+				imageHead = new ImageHeade(commentList.get(position-1).getUser().getImageUrl(), holder2.commentsitemImage);
+				imageHead.setImageHead();
+			}else{
+				holder2.commentsitemImage.setImageResource(R.drawable.head);
+			}			
 			holder2.commentsitemAuthor.setText(commentList.get(position-1).getUser().getUserId());
 			holder2.commentscount.setText("第" + (position+1) + "楼");
 			holder2.commentsitemTime.setText(commentList.get(position-1).getTime());

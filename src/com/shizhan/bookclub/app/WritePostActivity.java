@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobACL;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class WritePostActivity extends Activity implements OnClickListener{
@@ -27,6 +29,9 @@ public class WritePostActivity extends Activity implements OnClickListener{
 	private Button writeButtonOk;
 	private EditText writeEdHeade;
 	private EditText wruteEdContent;
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,9 @@ public class WritePostActivity extends Activity implements OnClickListener{
 		wruteEdContent = (EditText) findViewById(R.id.write_edcontent);
 		writeImageh.setOnClickListener(this);
 		writeButtonOk.setOnClickListener(this);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 
 	@Override
@@ -51,6 +59,7 @@ public class WritePostActivity extends Activity implements OnClickListener{
 			final String title = writeEdHeade.getText().toString();
 			final String content = wruteEdContent.getText().toString();
 			if(!content.equals("")){                //发表的内容不为空，则接下来获取服务器时间
+				progressBar.setVisibility(View.VISIBLE);
 				Bmob.getServerTime(this, new GetServerTimeListener() {
 					
 					@Override
@@ -77,19 +86,22 @@ public class WritePostActivity extends Activity implements OnClickListener{
 							@Override
 							public void onSuccess() {
 								Toast.makeText(WritePostActivity.this, "帖子发表成功", Toast.LENGTH_SHORT).show();
+								progressBar.setVisibility(View.GONE);
 								finish();
 							}
 							
 							@Override
 							public void onFailure(int arg0, String arg1) {
-								Toast.makeText(WritePostActivity.this, arg1, Toast.LENGTH_SHORT).show();								
+								Toast.makeText(WritePostActivity.this, arg1, Toast.LENGTH_SHORT).show();
+								progressBar.setVisibility(View.GONE);
 							}
 						});
 					}
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
-						Toast.makeText(WritePostActivity.this, arg1, Toast.LENGTH_SHORT).show();						
+						Toast.makeText(WritePostActivity.this, arg1, Toast.LENGTH_SHORT).show();
+						progressBar.setVisibility(View.GONE);
 					}
 				});
 			}else{

@@ -1,5 +1,7 @@
 package com.shizhan.bookclub.app;
 
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.UpdateListener;
 import android.app.Activity;
@@ -12,6 +14,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class ChangePasswordActivity extends Activity implements OnClickListener{
@@ -21,6 +24,9 @@ public class ChangePasswordActivity extends Activity implements OnClickListener{
 	private EditText passwordNew1;
 	private EditText passwordNew2;
 	private Button chgPasswordOk;
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,9 @@ public class ChangePasswordActivity extends Activity implements OnClickListener{
 		
 		chgPasswordImh.setOnClickListener(this);
 		chgPasswordOk.setOnClickListener(this);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 
 	@Override
@@ -43,11 +52,12 @@ public class ChangePasswordActivity extends Activity implements OnClickListener{
 		case R.id.chgpassword_imh:    //点击返回图标，返回上一界面
 			finish();
 			break;
-		case R.id.chgpassword_ok:       //点击确定按钮，修改密码，退出重新回到登陆界面
+		case R.id.chgpassword_ok:       //点击确定按钮，修改密码，退出重新回到登陆界面			
 			String oldPwd = passwordOld.getText().toString();
 			String newPwd = passwordNew1.getText().toString();
 			String newPwdr = passwordNew2.getText().toString();
 			if(newPwd.equals(newPwdr)){
+				progressBar.setVisibility(View.VISIBLE);
 				BmobUser.updateCurrentUserPassword(ChangePasswordActivity.this, oldPwd, newPwd, new UpdateListener() {
 					
 					@Override
@@ -57,11 +67,13 @@ public class ChangePasswordActivity extends Activity implements OnClickListener{
 						startActivity(intentl);	
 						finish();
 						MainActivity.instance.finish();    //销毁主界面
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(ChangePasswordActivity.this, "密码修改成功", Toast.LENGTH_SHORT).show();
 					}
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(ChangePasswordActivity.this, arg1, Toast.LENGTH_SHORT).show();
 					}
 				});

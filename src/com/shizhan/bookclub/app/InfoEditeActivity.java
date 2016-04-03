@@ -5,6 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
@@ -13,16 +23,7 @@ import cn.bmob.v3.listener.UpdateListener;
 import com.shizhan.bookclub.app.adapter.InfoEditeAdapterr;
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.MyUsers;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 public class InfoEditeActivity extends Activity implements OnClickListener{
 	
@@ -40,6 +41,9 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 	private List<HashMap<String, Object>> disconectList = new ArrayList<HashMap<String,Object>>();
 	private HashMap<String, Object> map = new HashMap<String, Object>();
 	
+	private ProgressBar progressBar;
+	private MyProgressBar myProgressBar;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +55,9 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 		infoediteOk = (TextView) findViewById(R.id.infoedite_ok);
 		infoediteCancel.setOnClickListener(this);
 		infoediteOk.setOnClickListener(this);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 	
 	@Override
@@ -67,9 +74,10 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 		}
 		
 	}
-
+	
 	//更新信息
 	private void updateInfo() {
+		progressBar.setVisibility(View.VISIBLE);
 		final MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
 		BmobQuery<Information> query = new BmobQuery<Information>();
 		query.addWhereEqualTo("user", user);
@@ -90,12 +98,14 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 						
 						@Override
 						public void onSuccess() {
+							progressBar.setVisibility(View.GONE);
 							Toast.makeText(InfoEditeActivity.this, "更新成功", Toast.LENGTH_SHORT).show();
 							finish();
 						}
 						
 						@Override
 						public void onFailure(int arg0, String arg1) {
+							progressBar.setVisibility(View.GONE);
 							Toast.makeText(InfoEditeActivity.this, "更新失败", Toast.LENGTH_SHORT).show();							
 						}
 					});
@@ -106,6 +116,7 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 			
 			@Override
 			public void onError(int arg0, String arg1) {
+				progressBar.setVisibility(View.GONE);
 				Toast.makeText(InfoEditeActivity.this, "查找失败", Toast.LENGTH_SHORT).show();				
 			}
 		});

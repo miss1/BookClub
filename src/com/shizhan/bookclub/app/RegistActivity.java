@@ -8,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import cn.bmob.v3.BmobACL;
 import cn.bmob.v3.BmobUser;
@@ -15,6 +16,7 @@ import cn.bmob.v3.listener.SaveListener;
 
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 public class RegistActivity extends Activity implements OnClickListener{
 	
@@ -29,12 +31,18 @@ public class RegistActivity extends Activity implements OnClickListener{
 	private String zhanghao;
 	private String nicheng;
 	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_regist);
 		inits();
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
 	}
 
 	//获取各控件的实例对象及设置事件监听
@@ -64,6 +72,7 @@ public class RegistActivity extends Activity implements OnClickListener{
 				rgmimas.setText("");
 				return;
 			}else{
+				progressBar.setVisibility(View.VISIBLE);
 				user.setUsername(zhanghao);
 				user.setPassword(mima);
 				user.setUserId(nicheng);
@@ -75,11 +84,13 @@ public class RegistActivity extends Activity implements OnClickListener{
 						Intent intent = new Intent(RegistActivity.this, MainActivity.class);
 						startActivity(intent);
 						createInfotable();
+						progressBar.setVisibility(View.GONE);
 						finish();
 					}
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(RegistActivity.this, "注册失败" + arg1, Toast.LENGTH_SHORT).show();						
 					}
 				});

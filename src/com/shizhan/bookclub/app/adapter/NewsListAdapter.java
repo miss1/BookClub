@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.shizhan.bookclub.app.R;
 import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.ImageHeade;
 
 public class NewsListAdapter extends BaseAdapter {
 	
@@ -62,6 +63,7 @@ public class NewsListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ImageHeade imageHead;
 		ViewHolder1 holder1 = null;
 		ViewHolder2 holder2 = null;
 		int type = getItemViewType(position);
@@ -106,7 +108,12 @@ public class NewsListAdapter extends BaseAdapter {
 		// …Ë÷√◊ ‘¥
 		switch (type) {
 		case TYPE_1:
-			holder1.newsitemImage.setImageResource(R.drawable.head);
+			if(nposts.get(position).getUser().getImageUrl() != null){
+				imageHead = new ImageHeade(nposts.get(position).getUser().getImageUrl(), holder1.newsitemImage);
+				imageHead.setImageHead();
+			}else{
+				holder1.newsitemImage.setImageResource(R.drawable.head);
+			}
 			holder1.newsitemAuthor.setText(nposts.get(position).getUser().getUserId());
 			holder1.newsitemTime.setText(nposts.get(position).getTime());
 			holder1.newsitemHead.setText(nposts.get(position).getTitle());
