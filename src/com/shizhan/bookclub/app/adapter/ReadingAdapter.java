@@ -103,8 +103,14 @@ public class ReadingAdapter extends BaseAdapter {
 		switch (type) {
 		case TYPE_1:
 			holder1.readingItemName.setText(listsl.get(position).getName());
-			holder1.readingItemhotCount.setText(listsl.get(position).getHot());
 			holder1.readingItemhotIm.setImageResource(R.drawable.hot);
+			int count = listsl.get(position).getHot().intValue();
+			String c = String.format("%.2f", (double)count/1000);
+			if(count >= 1000){
+				holder1.readingItemhotCount.setText(c+"k");
+			}else{
+				holder1.readingItemhotCount.setText(""+count);
+			}
 			break;
 		case TYPE_2:
 			holder2.im1.setImageResource(R.drawable.miniong);

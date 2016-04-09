@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout 
+        android:id="@+id/message_re"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#65FFFFCC">
+        
+        <TextView
+            android:id="@+id/message_tv" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="留言板"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"
+            android:textColor="#900099FF"/>
+        
+        <ImageView
+            android:id="@+id/message_imh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/laror" />
+    </RelativeLayout>
+    
+    <com.shizhan.bookclub.app.mylistview.ReFlashListView 
+        android:id="@+id/message_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/message_re"
+        android:background="#FFFFFF"/>
+    
+    <RelativeLayout 
+        android:id="@+id/message_nointernet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/message_re"
+        android:visibility="gone">
+        
+        <TextView 
+            android:id="@+id/message_tipss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="网络君调皮去了"
+            android:textSize="18sp"
+            android:layout_centerInParent="true"/>
+        
+        <ImageView 
+            android:id="@+id/message_imtips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/miniong"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/message_tipss"/>
+        
+    </RelativeLayout>
+
+</RelativeLayout>

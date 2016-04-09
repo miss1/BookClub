@@ -5,25 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobACL;
-import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BmobPointer;
-import cn.bmob.v3.datatype.BmobRelation;
-import cn.bmob.v3.listener.DeleteListener;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.GetServerTimeListener;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
-
-import com.shizhan.bookclub.app.adapter.CommentsListAdapter;
-import com.shizhan.bookclub.app.model.Comment;
-import com.shizhan.bookclub.app.model.MyUsers;
-import com.shizhan.bookclub.app.model.Post;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,8 +23,27 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobACL;
+import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
+import cn.bmob.v3.listener.DeleteListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.GetServerTimeListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
-public class PostCommentActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.adapter.CommentsListAdapter;
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.model.Comment;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class PostCommentActivity extends BaseActivity implements OnClickListener{
 	
 	private Post post;
 	
@@ -55,6 +55,9 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 	private ListView newsCommentList;
 	private CommentsListAdapter adapter;
 	private List<Comment> list = new ArrayList<Comment>();
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	private Boolean isShoucang = false;
 	
@@ -79,6 +82,10 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 		
 		adapter = new CommentsListAdapter(this, post, list);
 		newsCommentList.setAdapter(adapter);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		
 		init();
 		
 		//查询当前用户收藏的所有帖子,判断当前帖子是否被收藏
@@ -127,14 +134,16 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 					comment_reflash_progressBar1.setVisibility(View.VISIBLE);
 					init();
 				}else{                  
-					//如果当前用户为帖子发布者，则弹出单选提示框选择删除该评论还是查看作者信息
-					if(post.getUser().getObjectId().equals(BmobUser.getCurrentUser(PostCommentActivity.this).getObjectId())){
+					//如果当前用户为帖子发布者，又是评论发布者,则弹出提示框删除该评论
+					if(post.getUser().getObjectId().equals(BmobUser.getCurrentUser(PostCommentActivity.this).getObjectId())&&list.get(position-1).getUser().getObjectId().equals(BmobUser.getCurrentUser(PostCommentActivity.this).getObjectId())){
+						deleteCommentTip(position);
+					}else if(post.getUser().getObjectId().equals(BmobUser.getCurrentUser(PostCommentActivity.this).getObjectId())){
+						//如果当前用户为帖子发布者,不是评论发布者,则弹出单选提示框选择删除该评论还是查看作者信息
 						dePostorChInfoTip(position);
 					}else if(list.get(position-1).getUser().getObjectId().equals(BmobUser.getCurrentUser(PostCommentActivity.this).getObjectId())){         
 						//如果当前用户不是帖子发布者而是评论发布者,则弹出提示框删除该评论
 						deleteCommentTip(position);
-					}else{
-		
+					}else{		
 						//如果当前用户既不是帖子发布者也不是评论发布者，则弹出提示框查看该评论作者信息
 						checkAuthorInfoTip(position);
 					}
@@ -197,17 +206,21 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 				
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				progressBar.setVisibility(View.VISIBLE);
 				Comment dcomment = new Comment();
 				dcomment.setObjectId(list.get(position-1).getObjectId());            //删除该评论
 				dcomment.delete(PostCommentActivity.this, new DeleteListener() {
 						
 					@Override
 					public void onSuccess() {
+						progressBar.setVisibility(View.GONE);
+						init();
 						Toast.makeText(PostCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
 					}
 						
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -230,6 +243,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				progressBar.setVisibility(View.VISIBLE);
 				Post dpost = new Post();
 				dpost.setObjectId(post.getObjectId());                    //删除帖子
 				dpost.delete(PostCommentActivity.this, new DeleteListener() {
@@ -244,12 +258,14 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 							
 							@Override
 							public void onSuccess() {
+								progressBar.setVisibility(View.GONE);
 								Toast.makeText(PostCommentActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
 								finish();
 							}
 							
 							@Override
 							public void onFailure(int arg0, String arg1) {
+								progressBar.setVisibility(View.GONE);
 								Toast.makeText(PostCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();												
 							}
 						});
@@ -258,6 +274,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -288,6 +305,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 			finish();
 			break;
 		case R.id.newscomment_imshoucang:       //收藏
+			progressBar.setVisibility(View.VISIBLE);
 			MyUsers users = BmobUser.getCurrentUser(PostCommentActivity.this, MyUsers.class);
 			BmobRelation relation = new BmobRelation();
 			if(isShoucang){         //帖子已经收藏了，点击取消收藏
@@ -299,12 +317,14 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 					public void onSuccess() {
 						newsCommentImshoucang.setBackgroundResource(R.drawable.startn);
 						isShoucang = false;
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, "取消收藏",
 								Toast.LENGTH_SHORT).show();
 					}
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, arg1,
 								Toast.LENGTH_SHORT).show();						
 					}
@@ -319,12 +339,14 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 					public void onSuccess() {
 						newsCommentImshoucang.setBackgroundResource(R.drawable.start);
 						isShoucang = true;
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, "收藏成功",
 								Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, arg1,
 								Toast.LENGTH_SHORT).show();
 					}
@@ -334,6 +356,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 		case R.id.newscomment_buok:               //发表评论
 			final String content = newsCommentEdcomment.getText().toString();
 			if(!TextUtils.isEmpty(content)){             //发表的内容不为空，则接下来获取服务器时间
+				progressBar.setVisibility(View.VISIBLE);
 				Bmob.getServerTime(this, new GetServerTimeListener() {
 					
 					@Override
@@ -342,7 +365,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 						String times = formatter.format(new Date(arg0 * 1000L));              
 						//获取时间成功，往Comment表中添加一条内容
 						MyUsers user = BmobUser.getCurrentUser(PostCommentActivity.this, MyUsers.class);
-						Comment comment = new Comment();
+						final Comment comment = new Comment();
 						comment.setContent(content);
 						comment.setTime(times);
 						comment.setUser(user);
@@ -359,11 +382,15 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 							@Override
 							public void onSuccess() {
 								newsCommentEdcomment.setText("");
+								progressBar.setVisibility(View.GONE);
+								init();
+								post.update(PostCommentActivity.this);         //更新帖子
 								Toast.makeText(PostCommentActivity.this, "评论发表成功", Toast.LENGTH_SHORT).show();							
 							}
 							
 							@Override
 							public void onFailure(int arg0, String arg1) {
+								progressBar.setVisibility(View.GONE);
 								Toast.makeText(PostCommentActivity.this, "评论失败", Toast.LENGTH_SHORT).show();
 							}
 						});
@@ -371,6 +398,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 					
 					@Override
 					public void onFailure(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
 						Toast.makeText(PostCommentActivity.this, arg1, Toast.LENGTH_SHORT).show();						
 					}
 				});
@@ -386,6 +414,7 @@ public class PostCommentActivity extends Activity implements OnClickListener{
 	
 	//查询该帖子的所有评论
 	private void init(){
+		
 		BmobQuery<Comment> query = new BmobQuery<Comment>();
 		query.addWhereEqualTo("post", new BmobPointer(post));
 		//同时查询该评论的发布者的信息，以及该帖子的作者的信息

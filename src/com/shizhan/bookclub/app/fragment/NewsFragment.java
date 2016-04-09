@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.GetListener;
 
 import com.shizhan.bookclub.app.FindPostActivity;
 import com.shizhan.bookclub.app.PostCommentActivity;
@@ -101,7 +102,6 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 		
 		Date endDate = new Date(System.currentTimeMillis());             //本段程序运行的结束时间
 		runDate = endDate.getTime() - startDate.getTime();
-		System.out.println("runDate:"+runDate);
 	}
 
 	//newsListview 子项点击事件
@@ -111,8 +111,25 @@ public class NewsFragment extends Fragment implements OnClickListener,IReflashLi
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Post post = listp.get(position-1);
-				PostCommentActivity.actionStart(getActivity(), post);      //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面
+				progressBar.setVisibility(View.VISIBLE);
+				String objectId = listp.get(position-1).getObjectId();
+				BmobQuery<Post> query = new BmobQuery<Post>();
+				query.include("user");
+				query.getObject(getActivity(), objectId, new GetListener<Post>() {
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(getActivity(), "网络不稳定或者该帖子已被删除", Toast.LENGTH_LONG).show();
+						progressBar.setVisibility(View.GONE);
+						initInfo();
+					}
+					
+					@Override
+					public void onSuccess(Post arg0) {
+						progressBar.setVisibility(View.GONE);
+						PostCommentActivity.actionStart(getActivity(), arg0);      //跳转到带评论的帖子界面NewsCommentActivity，并将post帖子信息传递到该界面						
+					}
+				});
 			}
 		});
 	}

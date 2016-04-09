@@ -3,14 +3,6 @@ package com.shizhan.bookclub.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.shizhan.bookclub.app.adapter.FindAllAdapter;
-import com.shizhan.bookclub.app.model.MyUsers;
-import com.shizhan.bookclub.app.model.Post;
-import com.shizhan.bookclub.app.util.MyProgressBar;
-
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,8 +16,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 
-public class PersonPostActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.adapter.FindAllAdapter;
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class PersonPostActivity extends BaseActivity implements OnClickListener{
 	
 	private ImageView infoTalkImh;
 	private TextView infoTalkTv;

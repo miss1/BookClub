@@ -3,16 +3,6 @@ package com.shizhan.bookclub.app;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.shizhan.bookclub.app.model.MyUsers;
-import com.shizhan.bookclub.app.model.Post;
-import com.shizhan.bookclub.app.util.MyProgressBar;
-
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobACL;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.listener.GetServerTimeListener;
-import cn.bmob.v3.listener.SaveListener;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,8 +12,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.GetServerTimeListener;
+import cn.bmob.v3.listener.SaveListener;
 
-public class WritePostActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class WritePostActivity extends BaseActivity implements OnClickListener{
 	
 	private ImageView writeImageh;
 	private Button writeButtonOk;
@@ -76,11 +75,6 @@ public class WritePostActivity extends Activity implements OnClickListener{
 						post.setTime(times);
 						post.setUser(user);
 						
-						BmobACL acl = new BmobACL();         //创建一个ACL对象,设置访问权限
-						acl.setPublicReadAccess(true);         // 设置所有人可读的权限
-						acl.setWriteAccess(BmobUser.getCurrentUser(WritePostActivity.this), true);    // 设置当前用户可写的权限
-						
-						post.setACL(acl);
 						post.save(WritePostActivity.this, new SaveListener() {
 							
 							@Override

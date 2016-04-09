@@ -33,7 +33,7 @@
     <application
         android:name="com.shizhan.bookclub.app.util.BmobIMApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/shuquan"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
@@ -60,8 +60,9 @@
         <activity android:name="com.shizhan.bookclub.app.PostCollectActivity" />
         <activity android:name="com.shizhan.bookclub.app.ChangePasswordActivity" />
         <activity android:name="com.shizhan.bookclub.app.SearchUserActivity" />
-        <activity android:name="com.shizhan.bookclub.app.ChatActivity" />
         <activity android:name="com.shizhan.bookclub.app.WebViewActivity"/>
+        <activity android:name="com.shizhan.bookclub.app.WebCollect"/>
+        <activity android:name="com.shizhan.bookclub.app.MessageActivity"/>
 
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver" >
             <intent-filter>
@@ -90,7 +91,7 @@
 
         <meta-data
             android:name="Bmob_APP_KEY"
-            android:value="4b0291fca472bb6058b5d5f1f05fb696" />
+            android:value="c225bfb2bb3e51276cda259f0ffdc395" />
         
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

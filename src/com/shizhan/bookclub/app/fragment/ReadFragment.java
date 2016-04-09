@@ -3,6 +3,7 @@ package com.shizhan.bookclub.app.fragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,13 +11,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.shizhan.bookclub.app.MessageActivity;
 import com.shizhan.bookclub.app.R;
+import com.shizhan.bookclub.app.WebCollect;
 
 public class ReadFragment extends Fragment implements OnClickListener{
 	
 	private Button readOnlineRead;
 	private Button readMap;
+	private TextView readMessage;
+	private TextView readCollect;
 	
 	private ReadingFragment readingFragment;
 	private MapFragment mapFragment;
@@ -29,9 +35,13 @@ public class ReadFragment extends Fragment implements OnClickListener{
 		View readLayout = inflater.inflate(R.layout.read_layout, container, false);
 		readOnlineRead = (Button) readLayout.findViewById(R.id.read_onlineread);
 		readMap = (Button) readLayout.findViewById(R.id.read_map);
+		readMessage = (TextView) readLayout.findViewById(R.id.read_message);
+		readCollect = (TextView) readLayout.findViewById(R.id.read_collect);
 		
 		readOnlineRead.setOnClickListener(this);
 		readMap.setOnClickListener(this);
+		readMessage.setOnClickListener(this);
+		readCollect.setOnClickListener(this);
 		
 		fragmentManager = getFragmentManager();
 		
@@ -57,6 +67,14 @@ public class ReadFragment extends Fragment implements OnClickListener{
 			readMap.setBackgroundResource(R.drawable.a_shap_button_onclick);
 			readMap.setTextColor(Color.parseColor("#0099FF"));
 			setTabSeclection(1);
+			break;
+		case R.id.read_message:
+			Intent intentm = new Intent(getActivity(), MessageActivity.class);
+			startActivity(intentm);
+			break;
+		case R.id.read_collect:
+			Intent intentc = new Intent(getActivity(), WebCollect.class);
+			startActivity(intentc);
 			break;
 		default:
 			break;

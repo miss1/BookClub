@@ -3,17 +3,6 @@ package com.shizhan.bookclub.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BmobPointer;
-import cn.bmob.v3.listener.FindListener;
-
-import com.shizhan.bookclub.app.adapter.FindAllAdapter;
-import com.shizhan.bookclub.app.model.MyUsers;
-import com.shizhan.bookclub.app.model.Post;
-import com.shizhan.bookclub.app.util.MyProgressBar;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,14 +10,24 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.listener.FindListener;
 
-public class PostCollectActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.adapter.FindAllAdapter;
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.model.Post;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class PostCollectActivity extends BaseActivity implements OnClickListener{
 	
 	private ImageView infoTalkImh;
 	private TextView infoTalkTv;

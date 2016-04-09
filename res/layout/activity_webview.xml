@@ -4,6 +4,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#65FFFFCC">
+        
+        <ImageView 
+            android:id="@+id/webview_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/laror"/>
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:text="阅读百科"
+            android:textSize="18sp"
+            android:textColor="#900099FF"/>
+    </RelativeLayout>
+    
     <WebView 
         android:id="@+id/webView"
         android:layout_width="match_parent"

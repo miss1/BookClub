@@ -1,20 +1,31 @@
 package com.shizhan.bookclub.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
-public class WebViewActivity extends Activity {
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class WebViewActivity extends BaseActivity {
 	
 	private WebView webView;
 	private String url;
+	
+	private ImageView back;
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +33,14 @@ public class WebViewActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_webview);
 		webView = (WebView) findViewById(R.id.webView);
+		back = (ImageView) findViewById(R.id.webview_back);
 		
 		Intent intentr = getIntent();
 		url = intentr.getStringExtra("url");
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		progressBar.setVisibility(View.VISIBLE);
 		
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setScrollBarStyle(0);
@@ -37,9 +53,9 @@ public class WebViewActivity extends Activity {
 			@Override
 			public void onProgressChanged(WebView view, int newProgress) {
 				if(newProgress == 100){
-					WebViewActivity.this.setTitle("加载完成");
+					progressBar.setVisibility(View.GONE);
 				}else{
-					WebViewActivity.this.setTitle("加载中。。。");
+					progressBar.setVisibility(View.VISIBLE);
 				}
 			}
 		});
@@ -52,6 +68,14 @@ public class WebViewActivity extends Activity {
 			}
 		});
 		
+		//点击返回主界面
+		back.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();			
+			}
+		});
 	}
 
 	// goBack()表示返回webView的上一页面  
@@ -70,4 +94,5 @@ public class WebViewActivity extends Activity {
 		intent.putExtra("url", url);
 		context.startActivity(intent);
 	}
+
 }

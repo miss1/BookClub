@@ -3,15 +3,6 @@ package com.shizhan.bookclub.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.listener.FindListener;
-
-import com.shizhan.bookclub.app.adapter.SearchUserAdapter;
-import com.shizhan.bookclub.app.model.Information;
-import com.shizhan.bookclub.app.model.MyUsers;
-
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,10 +12,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.FindListener;
 
-public class SearchUserActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.adapter.SearchUserAdapter;
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.model.Information;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class SearchUserActivity extends BaseActivity implements OnClickListener{
 	
 	private EditText searchContact;
 	private TextView searchSearch;
@@ -32,6 +33,9 @@ public class SearchUserActivity extends Activity implements OnClickListener{
 	
 	private SearchUserAdapter adapter;
 	private List<Information> infolist = new ArrayList<Information>();
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	private MyUsers currenrUser;
 	
@@ -47,6 +51,9 @@ public class SearchUserActivity extends Activity implements OnClickListener{
 		adapter = new SearchUserAdapter(this, infolist);
 		searchList.setAdapter(adapter);
 		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		
 		currenrUser = BmobUser.getCurrentUser(SearchUserActivity.this, MyUsers.class);
 		
 		searchSearch.setOnClickListener(this);
@@ -58,6 +65,7 @@ public class SearchUserActivity extends Activity implements OnClickListener{
 		if(TextUtils.isEmpty(key)){
 			Toast.makeText(SearchUserActivity.this, "搜索内容不能为空", Toast.LENGTH_SHORT).show();
 		}else{
+			progressBar.setVisibility(View.VISIBLE);
 			//关键词不为空时，查询昵称或账号与关键词相同的用户信息，并显示在ListView上
 			BmobQuery<Information> query = new BmobQuery<Information>();
 			BmobQuery<Information> eq1 = new BmobQuery<Information>();
@@ -79,6 +87,7 @@ public class SearchUserActivity extends Activity implements OnClickListener{
 							infolist.add(info);
 						}
 						adapter.notifyDataSetChanged();
+						progressBar.setVisibility(View.GONE);
 						listItemClick();
 					}else{
 						Toast.makeText(SearchUserActivity.this, "并没有这个人哦", Toast.LENGTH_SHORT).show();
@@ -88,6 +97,7 @@ public class SearchUserActivity extends Activity implements OnClickListener{
 				
 				@Override
 				public void onError(int arg0, String arg1) {
+					progressBar.setVisibility(View.GONE);
 					Toast.makeText(SearchUserActivity.this, arg1, Toast.LENGTH_SHORT).show();					
 				}
 			});

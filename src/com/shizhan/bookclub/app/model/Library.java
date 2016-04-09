@@ -6,7 +6,7 @@ public class Library extends BmobObject {
 	
 	private String name;     //图书馆名称
 	private String url;      //网站链接
-	private String hot;      //访问量
+	private Number hot;      //访问量
 	
 	public String getName() {
 		return name;
@@ -24,14 +24,24 @@ public class Library extends BmobObject {
 		this.url = url;
 	}
 	
-	public String getHot() {
+	public Number getHot() {
 		return hot;
 	}
 	
-	public void setHot(String hot) {
+	public void setHot(Number hot) {
 		this.hot = hot;
 	}
 	
-	
+	// 为了方便使用List的contains方法,必须重写equals方法
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Library) {
+			Library library = (Library) obj;
+			return this.getObjectId().equals(library.getObjectId());
+		}
+		return false;
+	}
 
 }

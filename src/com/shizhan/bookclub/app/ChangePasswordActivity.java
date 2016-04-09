@@ -1,10 +1,5 @@
 package com.shizhan.bookclub.app;
 
-import com.shizhan.bookclub.app.util.MyProgressBar;
-
-import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.listener.UpdateListener;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +11,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.UpdateListener;
 
-public class ChangePasswordActivity extends Activity implements OnClickListener{
+import com.shizhan.bookclub.app.base.BaseActivity;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+
+public class ChangePasswordActivity extends BaseActivity implements OnClickListener{
 	
 	private ImageView chgPasswordImh;
 	private EditText passwordOld;

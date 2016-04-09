@@ -3,34 +3,37 @@ package com.shizhan.bookclub.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.bmob.newim.BmobIM;
-import cn.bmob.newim.bean.BmobIMConversation;
-import cn.bmob.newim.bean.BmobIMUserInfo;
-import cn.bmob.newim.listener.ConversationListener;
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 
 import com.shizhan.bookclub.app.adapter.InfoShowAdapter;
-import com.shizhan.bookclub.app.event.ChatEvent;
+import com.shizhan.bookclub.app.base.ActivityCollector;
+import com.shizhan.bookclub.app.base.BaseActivity;
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.InformationShow;
+import com.shizhan.bookclub.app.model.Message;
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.util.ImageHeade;
+import com.shizhan.bookclub.app.util.MyDialog;
+import com.shizhan.bookclub.app.util.MyProgressBar;
+import com.shizhan.bookclub.app.util.MyDialog.Dialogcallback;
 
-public class PersonerInfoActivity extends Activity implements OnClickListener{
+public class PersonerInfoActivity extends BaseActivity implements OnClickListener{
 	
 	private ImageView personInfoHead;
 	private ImageView personInfoBack;
@@ -42,6 +45,9 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 	private MyUsers user;
 	private InfoShowAdapter adapter;                    
 	private List<InformationShow> infolist = new ArrayList<InformationShow>();
+	
+	private MyProgressBar myProgressBar;
+	private ProgressBar progressBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,10 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 		}else{
 			personInfoHead.setImageResource(R.drawable.head);
 		}
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		
 		initInfo();
 	}
 	
@@ -85,6 +95,7 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 	
 	//初始化信息
 		private void initInfo() {
+			progressBar.setVisibility(View.VISIBLE);
 			BmobQuery<Information> query = new BmobQuery<Information>();
 			query.addWhereEqualTo("user", user);
 			query.findObjects(PersonerInfoActivity.this, new FindListener<Information>() {
@@ -109,6 +120,7 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 					infolist.add(bookstyle);
 					adapter = new InfoShowAdapter(PersonerInfoActivity.this, infolist);
 					personInfoList.setAdapter(adapter);
+					progressBar.setVisibility(View.GONE);
 				}
 				
 				@Override
@@ -116,6 +128,7 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 					adapter = new InfoShowAdapter(PersonerInfoActivity.this, infolist);
 					personInfoList.setAdapter(adapter);
 					Toast.makeText(PersonerInfoActivity.this, arg1, Toast.LENGTH_LONG).show();
+					progressBar.setVisibility(View.GONE);
 				}
 			});
 			
@@ -140,26 +153,41 @@ public class PersonerInfoActivity extends Activity implements OnClickListener{
 	}
 
 	private void sendMessage() {
-		BmobIMUserInfo info = new BmobIMUserInfo(user.getObjectId(), user.getUserId(), null);
-		ChatEvent event = new ChatEvent(info);
-		onEvent(event);
+		MyDialog myDialog = new MyDialog(PersonerInfoActivity.this);
+		myDialog.setDialogCallback(dialogcallback);
+		myDialog.show();
 	}
-
-	public void onEvent(ChatEvent event){
-        //如果需要更新用户资料，开发者只需要传新的info进去就可以了
-        BmobIM.getInstance().startPrivateConversation(event.info, new ConversationListener() {
-            @Override
-            public void done(BmobIMConversation c, BmobException e) {
-                if(e==null){
-                	Intent intent = new Intent(PersonerInfoActivity.this, ChatActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("c", c);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(PersonerInfoActivity.this, e.getMessage()+"("+e.getErrorCode()+")", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+	
+	//设置mydialog需要处理的事情 
+	Dialogcallback dialogcallback = new Dialogcallback() {
+		
+		@Override
+		public void dialogdo(String string) {
+			if(TextUtils.isEmpty(string)){
+				Toast.makeText(PersonerInfoActivity.this, "留言内容不能为空", Toast.LENGTH_SHORT).show();
+			}else{
+				progressBar.setVisibility(View.VISIBLE);
+				MyUsers fuser = BmobUser.getCurrentUser(PersonerInfoActivity.this, MyUsers.class);
+				Message message = new Message();
+				message.setFromuser(fuser);
+				message.setContent(string);
+				message.setTouser(user);
+				message.save(PersonerInfoActivity.this, new SaveListener() {
+					
+					@Override
+					public void onSuccess() {
+						Toast.makeText(PersonerInfoActivity.this, "留言成功", Toast.LENGTH_SHORT).show();
+						ActivityCollector.finishAll();
+						progressBar.setVisibility(View.GONE);
+					}
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(PersonerInfoActivity.this, arg1, Toast.LENGTH_SHORT).show();
+						progressBar.setVisibility(View.GONE);
+					}
+				});
+			}
+		}
+	};
 }

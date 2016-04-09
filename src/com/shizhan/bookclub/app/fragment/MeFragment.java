@@ -2,6 +2,7 @@ package com.shizhan.bookclub.app.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -37,6 +38,7 @@ import android.widget.PopupWindow.OnDismissListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.bmob.newim.BmobIM;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
@@ -86,6 +88,8 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	private ProgressBar progressBar;
 	private MyProgressBar myProgressBar;        //ProgressBar
 	
+	private long runDate;                     //连接服务器到服务器返回数据之间所隔得时间
+	
 	public static final int CHOOSE_PHOTO = 1;
 	
 	@Override
@@ -128,7 +132,8 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	}
 
 	//初始化信息
-	private void initInfo() {	
+	private void initInfo() {
+		Date startDate = new Date(System.currentTimeMillis());           //本段程序运行的起始时间
 		
 		MyUsers user = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
 		
@@ -174,6 +179,8 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 			}
 		});
 		
+		Date endDate = new Date(System.currentTimeMillis());             //本段程序运行的结束时间
+		runDate = endDate.getTime() - startDate.getTime();
 	}
 
 	//点击事件
@@ -201,15 +208,27 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 	@Override
 	public void onReflash() {
 		Handler handle = new Handler();
-		handle.postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
+		if(runDate > 2000){
+			handle.postDelayed(new Runnable() {
 				
-				initInfo();
-				listInformation.reflashComplete();
-			}
-		}, 2000);
+				@Override
+				public void run() {
+					
+					initInfo();
+					listInformation.reflashComplete();
+				}
+			}, runDate);
+		}else{
+			handle.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					initInfo();
+					listInformation.reflashComplete();
+				}
+			}, 2000);
+		}
 	}
 
 	//显示PopupWindow
@@ -229,7 +248,7 @@ public class MeFragment extends Fragment implements OnClickListener,IReflashList
 		
 		//popupWindow出现时其他地方变暗
 		WindowManager.LayoutParams param = getActivity().getWindow().getAttributes();
-		param.alpha=0.7f;
+		param.alpha=0.5f;
 		getActivity().getWindow().setAttributes(param);
 		
 		//当popupWindow消失时，将变暗的地方变回正常的样子

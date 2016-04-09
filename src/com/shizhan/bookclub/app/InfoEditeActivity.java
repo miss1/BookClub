@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,11 +20,12 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 import com.shizhan.bookclub.app.adapter.InfoEditeAdapterr;
+import com.shizhan.bookclub.app.base.BaseActivity;
 import com.shizhan.bookclub.app.model.Information;
 import com.shizhan.bookclub.app.model.MyUsers;
 import com.shizhan.bookclub.app.util.MyProgressBar;
 
-public class InfoEditeActivity extends Activity implements OnClickListener{
+public class InfoEditeActivity extends BaseActivity implements OnClickListener{
 	
 	private TextView infoediteCancel;
 	private TextView infoediteOk;
@@ -49,15 +49,18 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_infoedite);
+		
+		myProgressBar = new MyProgressBar();
+		progressBar = myProgressBar.createMyProgressBar(this, null);
+		
 		initInfo();
+		
 		infoEditeList = (ListView) findViewById(R.id.infoedite_list);
 		infoediteCancel = (TextView) findViewById(R.id.infoedite_cancel);
 		infoediteOk = (TextView) findViewById(R.id.infoedite_ok);
 		infoediteCancel.setOnClickListener(this);
 		infoediteOk.setOnClickListener(this);
-		
-		myProgressBar = new MyProgressBar();
-		progressBar = myProgressBar.createMyProgressBar(this, null);
+	
 	}
 	
 	@Override
@@ -124,6 +127,7 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 
 	//加载初始信息
 	private void initInfo() {
+		progressBar.setVisibility(View.VISIBLE);
 		MyUsers user = BmobUser.getCurrentUser(this, MyUsers.class);
 		BmobQuery<Information> query = new BmobQuery<Information>();
 		query.addWhereEqualTo("user", user);
@@ -165,6 +169,7 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 				list.add(map7);
 				adapter = new InfoEditeAdapterr(InfoEditeActivity.this, list);
 				infoEditeList.setAdapter(adapter);
+				progressBar.setVisibility(View.GONE);
 			}
 			
 			@Override
@@ -175,6 +180,7 @@ public class InfoEditeActivity extends Activity implements OnClickListener{
 				disconectList.add(map);
 				adapterd = new SimpleAdapter(InfoEditeActivity.this, disconectList, R.layout.listbody_layout, new String[]{"image","text"}, new int[]{R.id.im1,R.id.tx1});
 				infoEditeList.setAdapter(adapterd);
+				progressBar.setVisibility(View.GONE);
 				Toast.makeText(InfoEditeActivity.this, arg1, Toast.LENGTH_LONG).show();
 			}
 		});

@@ -115,7 +115,7 @@ public class NewsListAdapter extends BaseAdapter {
 				holder1.newsitemImage.setImageResource(R.drawable.head);
 			}
 			holder1.newsitemAuthor.setText(nposts.get(position).getUser().getUserId());
-			holder1.newsitemTime.setText(nposts.get(position).getTime());
+			holder1.newsitemTime.setText(nposts.get(position).getUpdatedAt());
 			holder1.newsitemHead.setText(nposts.get(position).getTitle());
 			holder1.newsitemContent.setText(nposts.get(position).getContent());
 			break;

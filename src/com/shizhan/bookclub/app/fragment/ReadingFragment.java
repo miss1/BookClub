@@ -3,16 +3,9 @@ package com.shizhan.bookclub.app.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
-
-import com.shizhan.bookclub.app.R;
-import com.shizhan.bookclub.app.WebViewActivity;
-import com.shizhan.bookclub.app.adapter.ReadingAdapter;
-import com.shizhan.bookclub.app.model.Library;
-import com.shizhan.bookclub.app.util.MyProgressBar;
-
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,11 +14,26 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.GetListener;
+import cn.bmob.v3.listener.UpdateListener;
+
+import com.shizhan.bookclub.app.R;
+import com.shizhan.bookclub.app.WebViewActivity;
+import com.shizhan.bookclub.app.adapter.ReadingAdapter;
+import com.shizhan.bookclub.app.model.Library;
+import com.shizhan.bookclub.app.model.MyUsers;
+import com.shizhan.bookclub.app.util.MyProgressBar;
 
 public class ReadingFragment extends Fragment implements OnClickListener{
 	
@@ -119,6 +127,7 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 
 	//查询所有数据
 	private void queryAll() {
+		
 		readingList.setVisibility(View.GONE);
 		progressBar.setVisibility(View.VISIBLE);
 		BmobQuery<Library> query = new BmobQuery<Library>();
@@ -154,19 +163,145 @@ public class ReadingFragment extends Fragment implements OnClickListener{
 					int position, long id) {
 				if(lists.size() == 0)
 					return;
-				Library library = lists.get(position);
+				String objectedId = lists.get(position).getObjectId();
 				
-				//跳转到相应网页
-				WebViewActivity.actionStart(getActivity(), library.getUrl());
-				
-				//访问量加1
-				int hot = Integer.parseInt(library.getHot())+1;
-				library.setHot(String.valueOf(hot));
-				library.update(getActivity());
+				BmobQuery<Library> query = new BmobQuery<Library>();
+				query.getObject(getActivity(), objectedId, new GetListener<Library>() {
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();					
+					}
+					
+					@Override
+					public void onSuccess(Library arg0) {
+						//跳转到相应网页
+						WebViewActivity.actionStart(getActivity(), arg0.getUrl());
+						//访问量加1
+						int hot = arg0.getHot().intValue() + 1;
+						arg0.setHot(hot);
+						arg0.update(getActivity());
+						readingSearchEd.setText("");
+						readingSearchImde.setVisibility(View.GONE);
+						readingSearchImsc.setVisibility(View.VISIBLE);
+					}
+				});				
 				queryAll();
 			}
 		});
 		
+		 //长按显示收藏对话框
+		readingList.setOnItemLongClickListener(new OnItemLongClickListener() {      
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					final int position, long id) {
+				if(lists.size() == 0)
+					return true;
+				progressBar.setVisibility(View.VISIBLE);
+				BmobQuery<Library> queryl = new BmobQuery<Library>();
+				MyUsers user = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
+				queryl.addWhereRelatedTo("likes", new BmobPointer(user));
+				queryl.findObjects(getActivity(), new FindListener<Library>() {
+					
+					@Override
+					public void onSuccess(List<Library> arg0) {
+						progressBar.setVisibility(View.GONE);
+						if(!arg0.contains(lists.get(position))){
+							ColectWeb(lists.get(position));                 //收藏
+						}else{
+							DisColecWeb(lists.get(position));                //取消收藏
+						}						
+					}
+					
+					@Override
+					public void onError(int arg0, String arg1) {
+						progressBar.setVisibility(View.GONE);
+						Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();						
+					}
+				});
+				
+				return true;
+			}
+		});
+	}
+
+	//收藏对话框
+	private void ColectWeb(final Library library) {
+		new AlertDialog.Builder(getActivity()).setTitle("收藏").setMessage("收藏该站?")
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(final DialogInterface dialog, int which) {
+				progressBar.setVisibility(View.VISIBLE);
+				MyUsers users = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
+				BmobRelation relation = new BmobRelation();
+				relation.add(library);
+				users.setLikes(relation);
+				users.update(getActivity(), new UpdateListener() {
+					
+					@Override
+					public void onSuccess() {
+						Toast.makeText(getActivity(), "收藏成功", Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+						progressBar.setVisibility(View.GONE);
+					}
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+						progressBar.setVisibility(View.GONE);
+					}
+				});
+			}
+		})
+		.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();			
+			}
+		}).show();		
+	}
+	
+	//取消收藏对话框
+	private void DisColecWeb(final Library library){
+		new AlertDialog.Builder(getActivity()).setTitle("取消收藏").setMessage("取消收藏该站?")
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(final DialogInterface dialog, int which) {
+				progressBar.setVisibility(View.VISIBLE);
+				MyUsers users = BmobUser.getCurrentUser(getActivity(), MyUsers.class);
+				BmobRelation relation = new BmobRelation();
+				relation.remove(library);
+				users.setLikes(relation);
+				users.update(getActivity(), new UpdateListener() {
+					
+					@Override
+					public void onSuccess() {
+						Toast.makeText(getActivity(), "取消收藏成功", Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+						progressBar.setVisibility(View.GONE);
+					}
+					
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+						progressBar.setVisibility(View.GONE);
+					}
+				});
+			}
+		})
+		.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();			
+			}
+		}).show();
 	}
 
 }
